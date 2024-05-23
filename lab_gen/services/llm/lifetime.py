@@ -3,7 +3,7 @@ from typing import Any
 import boto3
 
 from google.oauth2 import service_account
-from langchain_community.chat_models import BedrockChat
+from langchain_aws.chat_models.bedrock import ChatBedrock
 from langchain_community.llms import HuggingFaceEndpoint
 from langchain_core.language_models import BaseLanguageModel
 from langchain_google_vertexai import ChatVertexAI, HarmBlockThreshold, HarmCategory
@@ -85,12 +85,23 @@ def init_models() -> None:
                         service_name="bedrock-runtime",
                         **config.model_dump(),
                     )
-                    llm = BedrockChat(
-                        client=boto_client,
-                        model_id=model.identifier,
-                        streaming=True,
-                        model_kwargs={"max_tokens": MAX_TOKENS},
-                    )
+                    bedrock_kwargs = {
+                        "client": boto_client,
+                        "model_id": model.identifier,
+                        "streaming": True,
+                        "model_kwargs": {"max_tokens": MAX_TOKENS},
+                    }
+
+                    # Guardrail settings
+                    guardrails = {}
+                    guardrailid = model.config.get("guardrailIdentifier")
+                    guardrailversion = model.config.get("guardrailVersion")
+                    if guardrailid is not None and guardrailversion is not None:
+                        guardrails["guardrailIdentifier"] = guardrailid
+                        guardrails["guardrailVersion"] = guardrailversion
+                        bedrock_kwargs["guardrails"] = guardrails
+
+                    llm = ChatBedrock(**bedrock_kwargs)
                 case ModelProvider.VERTEX:
                     credentials = service_account.Credentials.from_service_account_info(model.config)
                     vertex_setup = {

@@ -101,6 +101,24 @@ The model configuration is a json list and can be specified in any of the follow
 2. `AZURE_MODELS` can be specified as an enviroment variable on a single line (see example above).
 3. A `secrets` folder can be used to set values.  For example, rename the `example_secrets` folder to just `secrets` and the `AZURE_MODELS` file will be used for the model configuration.
 
+### AWS Guardrails
+
+AWS Guardrails can be configured on the Bedrock models by adding the 'guardrailId' and 'guardrailversion' to the config.
+
+An example of a Bedrock config with Guardrails configured:
+```bash
+["provider": "BEDROCK",
+"variant": "ADVANCED",
+"family": "CLAUDE",
+"identifier": "anthropic.claude-3-sonnet",
+"description": "Claude 3 Sonnet",
+"location": "Paris",
+"config":{"AWS_REGION": "eu-west-3",
+          "AWS_ACCESS_KEY_ID": "xxxxx",
+          "AWS_SECRET_ACCESS_KEY": "xxxxx",
+          "guardrailIdentifier": "ejgbdBFg5TD",
+          "guardrailVersion": "DRAFT"}]
+```
 
 ## Pre-commit
 

@@ -37,6 +37,7 @@ huggingface-hub = "^0.20.3"
 langchain-community = "^0.0.31"
 transformers = "^4.37.2"
 langsmith = "^0.1.49"
+langchain-aws = "^0.1.4"
 
 [tool.poetry.group.dev]
 optional = true

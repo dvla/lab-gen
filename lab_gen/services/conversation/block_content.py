@@ -1,6 +1,5 @@
 
 
-from abc import ABC
 from typing import Any
 
 from langchain.callbacks.base import BaseCallbackHandler
@@ -10,9 +9,10 @@ from openai import BadRequestError
 
 
 AZURE_CONTENT_FILTER_REASON = "content_filter"
+BEDROCK_CONTENT_FILTER_REASON = "Your request was blocked due to content filtering. Please modify your prompt and retry." # noqa: E501
 
 
-class BlockedContentTracker(ABC, BaseCallbackHandler):
+class BlockedContentTracker(BaseCallbackHandler):
     """A callback handler that handles the blocked content instances in a conversation service."""
     def __init__(self, llm: BaseLanguageModel) -> None:
         """
@@ -75,3 +75,20 @@ class VertexBlockedContentTracker(BlockedContentTracker):
             and (safety_ratings := response.generations[0][0].generation_info.get("safety_ratings", []))
             and any(rating.get("blocked", False) for rating in safety_ratings if isinstance(rating, dict))):
                 self.has_blocked = True
+
+class BedrockBlockedContentTracker(BlockedContentTracker):
+    """A callback handler specific to Bedrock that handles the blocked content instances in a conversation service."""
+    def on_llm_end(self, response: RunnableWithMessageHistory, **kwargs: Any) -> None: # noqa: ARG002, ANN401
+        """
+        A function that handles the end of a BedrockLLM request with possible blocked content.
+
+        Args:
+            response (RunnableWithMessageHistory): The response object containing message history.
+            **kwargs (Any): Additional keyword arguments.
+
+        Returns:
+            None
+        """
+        if (isinstance(response.generations, list)
+            and response.generations[0][0].text == BEDROCK_CONTENT_FILTER_REASON):
+            self.has_blocked = True

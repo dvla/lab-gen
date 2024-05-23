@@ -22,6 +22,7 @@ from lab_gen.datatypes.metadata import ConversationMetadata
 from lab_gen.datatypes.models import ModelProvider
 from lab_gen.services.conversation.block_content import (
     AzureBlockedContentTracker,
+    BedrockBlockedContentTracker,
     BlockedContentTracker,
     VertexBlockedContentTracker,
 )
@@ -102,12 +103,15 @@ class ConversationService:
             A dictionary containing the configuration for the conversation.
         """
         metrics_counter = LLMMetricsCounter(llm)
-        if meta.provider == ModelProvider.AZURE:
-            blocked_content_counter = AzureBlockedContentTracker(llm)
-        elif meta.provider == ModelProvider.VERTEX:
-            blocked_content_counter = VertexBlockedContentTracker(llm)
-        else:
-            blocked_content_counter = BlockedContentTracker(llm)
+        match meta.provider:
+            case ModelProvider.AZURE:
+                blocked_content_counter = AzureBlockedContentTracker(llm)
+            case ModelProvider.VERTEX:
+                blocked_content_counter = VertexBlockedContentTracker(llm)
+            case ModelProvider.BEDROCK:
+                blocked_content_counter = BedrockBlockedContentTracker(llm)
+            case _:
+                blocked_content_counter = BlockedContentTracker(llm)
         return {
             "callbacks": [metrics_counter, blocked_content_counter],
             "configurable": {
