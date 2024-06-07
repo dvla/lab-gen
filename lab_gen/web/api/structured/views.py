@@ -1,3 +1,4 @@
+import json
 import uuid
 
 from typing import Annotated
@@ -5,9 +6,11 @@ from typing import Annotated
 from fastapi import Depends, HTTPException, Header
 from fastapi.responses import JSONResponse
 from fastapi.routing import APIRouter
+from langchain.output_parsers import OutputFixingParser
 from langchain_core.exceptions import OutputParserException
 from langchain_core.output_parsers import JsonOutputParser
 from langchain_core.prompts import ChatPromptTemplate, HumanMessagePromptTemplate
+from langchain_core.pydantic_v1 import ValidationError
 from loguru import logger
 from starlette.status import HTTP_500_INTERNAL_SERVER_ERROR
 
@@ -15,6 +18,7 @@ from lab_gen.datatypes.calls import Call
 from lab_gen.services.conversation.conversation import ConversationMetadata, ConversationService
 from lab_gen.services.conversation.dependencies import conversation_provider
 from lab_gen.services.llm.lifetime import get_llm
+from lab_gen.services.llm.parsers import StrictJsonOutputParser
 from lab_gen.services.metrics.dependencies import metrics_provider
 from lab_gen.services.metrics.metrics import MetricsService
 from lab_gen.web.api import constants
@@ -31,7 +35,9 @@ key_check = Annotated[bool, Depends(get_api_key)]
 conversation_service = Annotated[ConversationService, Depends(conversation_provider)]
 metrics_service = Annotated[MetricsService, Depends(metrics_provider)]
 
-parser = JsonOutputParser(pydantic_object=Call)
+lenient_parser = JsonOutputParser(pydantic_object=Call)
+strict_parser = StrictJsonOutputParser(pydantic_object=Call)
+
 
 @router.post(
     "/structured/call",
@@ -90,12 +96,12 @@ async def call_handler(
         meta = ConversationMetadata(provider=request.provider, variant=request.variant, business_user=x_business_user)
         llm = get_llm(request.provider, request.variant)
 
-        input_variables = {"user_id": x_business_user, "format_instructions": parser.get_format_instructions()}
+        input_variables = {"user_id": x_business_user, "format_instructions": lenient_parser.get_format_instructions()}
         if request.variables:
             input_variables.update(request.variables)
 
         if llm:
-            config = conversation.generate_config(meta,conversation_id, llm)
+            config = conversation.generate_config(meta, conversation_id, llm)
             prompt = conversation.get_prompt("structured_call_summary")
             messages = [
                 HumanMessagePromptTemplate(prompt=prompt),
@@ -106,10 +112,22 @@ async def call_handler(
             response = chain_with_history.invoke(input_variables, config=config)
 
             try:
-                # This is a work around because the JsonOutputParser didn't work in a chain.
+                # This is a work-around because the JsonOutputParser didn't work in a chain.
                 # So we use the StrOutputParser to get the response and then parse it as json.
-                response_json = parser.parse(response)
+                response_json = lenient_parser.parse(response)
+                # The following parser is stricter and would throw a ValidationError if the json is not valid.
+                Call.parse_obj(response_json)
+                # Successfully produced valid json on first attempt.
+            except ValidationError:
+                logger.debug("Before: " + json.dumps(response_json, sort_keys=True, indent=4))
+                fixing_parser = OutputFixingParser.from_llm(
+                    llm=llm, parser=strict_parser, prompt=strict_parser.prompt, max_retries=3,
+                )
+                response_json = fixing_parser.parse(response_json)
+                logger.debug("After: " + json.dumps(response_json, sort_keys=True, indent=4))
+                # Successfully produced valid json using fixer.
             except OutputParserException as ope:
+                # This is an unrecoverable parsing error.
                 logger.warning("Output Parser error: {0}", response)
                 raise HTTPException(HTTP_500_INTERNAL_SERVER_ERROR, constants.error_invalid_json_output) from ope
 
