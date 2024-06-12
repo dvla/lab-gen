@@ -20,7 +20,7 @@ from lab_gen.services.conversation.dependencies import conversation_provider
 from lab_gen.services.llm.lifetime import get_llm
 from lab_gen.services.llm.parsers import StrictJsonOutputParser
 from lab_gen.services.metrics.dependencies import metrics_provider
-from lab_gen.services.metrics.metrics import MetricsService
+from lab_gen.services.metrics.metrics import Metric, MetricsService
 from lab_gen.web.api import constants
 from lab_gen.web.api.conversation.views import (
     CONVERSATION_ID,
@@ -118,6 +118,7 @@ async def call_handler(
                 # The following parser is stricter and would throw a ValidationError if the json is not valid.
                 Call.parse_obj(response_json)
                 # Successfully produced valid json on first attempt.
+                metrics.increment(Metric.COUNT_SUCCESSFUL_JSON, config["configurable"]["metadata"])
             except ValidationError:
                 logger.debug("Before: " + json.dumps(response_json, sort_keys=True, indent=4))
                 fixing_parser = OutputFixingParser.from_llm(
@@ -126,9 +127,11 @@ async def call_handler(
                 response_json = fixing_parser.parse(response_json)
                 logger.debug("After: " + json.dumps(response_json, sort_keys=True, indent=4))
                 # Successfully produced valid json using fixer.
+                metrics.increment(Metric.COUNT_FIXED_JSON, config["configurable"]["metadata"])
             except OutputParserException as ope:
                 # This is an unrecoverable parsing error.
                 logger.warning("Output Parser error: {0}", response)
+                metrics.increment(Metric.COUNT_FAILED_JSON, config["configurable"]["metadata"])
                 raise HTTPException(HTTP_500_INTERNAL_SERVER_ERROR, constants.error_invalid_json_output) from ope
 
             metrics.record_llm_metrics(config["callbacks"][0], config["configurable"]["metadata"])

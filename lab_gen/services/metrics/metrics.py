@@ -20,6 +20,9 @@ class Metric(Enum):
     COUNT_ERRORS = "error_code_counter"
     COUNT_CONTENT_FILTERED = "content_filtered_counter"
     TIMER_LLM_REQUESTS = "llm_request_timer"
+    COUNT_SUCCESSFUL_JSON = "successful_json_counter"
+    COUNT_FIXED_JSON = "fixed_json_counter"
+    COUNT_FAILED_JSON = "failed_json_counter"
 
 
 class MetricsService:
@@ -52,6 +55,12 @@ class MetricsService:
                 meter.create_histogram(Metric.TIMER_LLM_REQUESTS.value))
         setattr(self._app.state, Metric.COUNT_CONTENT_FILTERED.value,
                 meter.create_counter(Metric.COUNT_CONTENT_FILTERED.value))
+        setattr(self._app.state, Metric.COUNT_SUCCESSFUL_JSON.value,
+                meter.create_counter(Metric.COUNT_SUCCESSFUL_JSON.value))
+        setattr(self._app.state, Metric.COUNT_FIXED_JSON.value,
+                meter.create_histogram(Metric.COUNT_FIXED_JSON.value))
+        setattr(self._app.state, Metric.COUNT_FAILED_JSON.value,
+                meter.create_counter(Metric.COUNT_FAILED_JSON.value))
 
     def increment(self, metric: Metric, meta: dict, value: float = 1) -> None:
         """
