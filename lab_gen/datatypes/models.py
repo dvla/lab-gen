@@ -24,7 +24,7 @@ class ModelFamily(Enum):
     GPT = "GPT"
     CLAUDE = "CLAUDE"
     GEMINI = "GEMINI"
-    MIXTRAL = "MIXTRAL"
+    MISTRAL = "MISTRAL"
     UNSPECIFIED = "UNSPECIFIED"
 
 

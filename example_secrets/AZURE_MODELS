@@ -2,6 +2,7 @@
   {
     "provider": "AZURE",
     "variant": "GENERAL",
+    "family": "GPT",
     "identifier": "gpt-35-1106",
     "description": "OpenAI GPT-3.5 Turbo powered",
     "location": "UK",
@@ -14,6 +15,7 @@
   {
     "provider": "AZURE",
     "variant": "ADVANCED",
+    "family": "GPT",
     "identifier": "gpt-4-1106",
     "description": "OpenAI GPT-4",
     "location": "UK",
@@ -26,6 +28,7 @@
   {
     "provider": "AZURE",
     "variant": "MULTIMODAL",
+    "family": "GPT",
     "identifier": "gpt-4-vision",
     "description": "OpenAI GPT-4",
     "location": "Sweden",
@@ -38,6 +41,7 @@
   {
     "provider": "BEDROCK",
     "variant": "GENERAL",
+    "family": "CLAUDE",
     "identifier": "anthropic.claude-instant-v1",
     "description": "anthropic.claude-instant",
     "location": "Frankfurt",
@@ -50,6 +54,7 @@
   {
     "provider": "HUGGINGFACE",
     "variant": "GENERAL",
+    "family": "MISTRAL",
     "identifier": "Mixtral-8x7b-Instruct-v0.1",
     "description": "Mixtral 8x7b Instruct-v0.1",
     "location": "Unknown",
@@ -61,6 +66,7 @@
   {
     "provider": "HUGGINGFACE",
     "variant": "ADVANCED",
+    "family": "UNSPECIFIED",
     "identifier": "Llama-2-70b",
     "description": "Llama 2 70 billion parameters",
     "location": "Unknown",
@@ -72,6 +78,7 @@
   {
     "provider": "VERTEX",
     "variant": "GENERAL",
+    "family":"GEMINI",
     "identifier": "gemini-pro",
     "description": "Google's Gemini Pro, designed to handle natural language tasks, multi-turn text and chat.",
     "location": "USA",
