@@ -11,6 +11,8 @@
 
 [![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/dvla/lab-gen)
 
+[![Open in VS Code Dev Containers](https://img.shields.io/static/v1?style=for-the-badge&label=Dev%20Containers&message=Open&color=blue&logo=visualstudiocode)](https://vscode.dev/redirect?url=vscode://ms-vscode-remote.remote-containers/cloneInVolume?url=https://github.com/dvla/lab-gen)
+
 To run the project use this set of commands:
 
 Setup the `.env` file:
@@ -92,7 +94,6 @@ APPLICATIONINSIGHTS_CONNECTION_STRING="InstrumentationKey=99x99999-9xxx-9999-x9x
 LOGURU_LEVEL="INFO"
 TIKTOKEN_CACHE_DIR=tiktoken_cache
 ```
-You can read more about BaseSettings class here: https://pydantic-docs.helpmanual.io/usage/settings/
 
 ### Model config
 The model configuration is a json list and can be specified in any of the following ways:

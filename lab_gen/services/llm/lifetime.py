@@ -14,6 +14,7 @@ from lab_gen.datatypes.models import (
     AzureModelConfig,
     BedrockModelConfig,
     HuggingfaceModelConfig,
+    Model,
     ModelProvider,
     ModelVariant,
 )
@@ -55,6 +56,84 @@ def get_llm(provider: ModelProvider, variant: ModelVariant) -> BaseLanguageModel
     return None
 
 
+def init_azure_llm(model: Model) -> AzureChatOpenAI:
+    """
+    Initialize the LLM running on Azure.
+
+    Args:
+        model (Model): The model configuration.
+
+    Returns:
+        AzureChatOpenAI: The initialized Azure LLM.
+    """
+    config = AzureModelConfig(**model.config)
+    return AzureChatOpenAI(
+        verbose=True,
+        temperature=0,
+        azure_deployment=model.identifier,
+        max_tokens=MAX_TOKENS,
+        api_version=config.api_version,
+        azure_endpoint=config.endpoint,
+        api_key=config.api_key,
+        streaming=True,
+    )
+
+def init_bedrock_llm(model: Model) -> ChatBedrock:
+    """
+    Initialize the LLM running on Bedrock.
+
+    Args:
+        model (Model): The model configuration.
+
+    Returns:
+        ChatBedrock: The initialized Bedrock LLM.
+    """
+    config = BedrockModelConfig(**model.config)
+    boto_client = boto3.client(
+        service_name="bedrock-runtime",
+        **config.model_dump(),
+    )
+    bedrock_kwargs = {
+        "client": boto_client,
+        "model_id": model.identifier,
+        "streaming": True,
+        "model_kwargs": {"max_tokens": MAX_TOKENS},
+    }
+    # Guardrail settings
+    guardrails = {}
+    guardrailid = model.config.get("guardrailIdentifier")
+    guardrailversion = model.config.get("guardrailVersion")
+    if guardrailid is not None and guardrailversion is not None:
+        guardrails["guardrailIdentifier"] = guardrailid
+        guardrails["guardrailVersion"] = guardrailversion
+        bedrock_kwargs["guardrails"] = guardrails
+    return ChatBedrock(**bedrock_kwargs)
+
+def init_vertex_llm(model: Model) -> ChatVertexAI:
+    """
+    Initializes and returns a ChatVertexAI instance for the given model.
+
+    Args:
+        model (Model): The model configuration.
+
+    Returns:
+        ChatVertexAI: The initialized ChatVertexAI instance.
+
+    """
+    credentials = service_account.Credentials.from_service_account_info(model.config)
+    vertex_setup = {
+        "credentials": credentials,
+        "model_name": model.identifier,
+        "project": model.config["project_id"],
+        "max_output_tokens": MAX_TOKENS,
+        "streaming": True,
+        "safety_settings": VERTEX_SAFETY_CONFIG,
+        "convert_system_message_to_human": True,
+    }
+    if "location" in model.config:
+        vertex_setup["location"] = model.config["location"]
+    return ChatVertexAI(**vertex_setup)
+
 def init_models() -> None:
     """
     Loops through the model settings, for each model configures an LLM client.
@@ -68,54 +147,11 @@ def init_models() -> None:
             llm = None
             match model.provider:
                 case ModelProvider.AZURE:
-                    config = AzureModelConfig(**model.config)
-                    llm = AzureChatOpenAI(
-                        verbose=True,
-                        temperature=0,
-                        model_name=model.identifier,
-                        max_tokens=MAX_TOKENS,
-                        api_version=config.api_version,
-                        azure_endpoint=config.endpoint,
-                        api_key=config.api_key,
-                        streaming=True,
-                    )
+                    llm = init_azure_llm(model)
                 case ModelProvider.BEDROCK:
-                    config = BedrockModelConfig(**model.config)
-                    boto_client = boto3.client(
-                        service_name="bedrock-runtime",
-                        **config.model_dump(),
-                    )
-                    bedrock_kwargs = {
-                        "client": boto_client,
-                        "model_id": model.identifier,
-                        "streaming": True,
-                        "model_kwargs": {"max_tokens": MAX_TOKENS},
-                    }
-
-                    # Guardrail settings
-                    guardrails = {}
-                    guardrailid = model.config.get("guardrailIdentifier")
-                    guardrailversion = model.config.get("guardrailVersion")
-                    if guardrailid is not None and guardrailversion is not None:
-                        guardrails["guardrailIdentifier"] = guardrailid
-                        guardrails["guardrailVersion"] = guardrailversion
-                        bedrock_kwargs["guardrails"] = guardrails
-
-                    llm = ChatBedrock(**bedrock_kwargs)
+                    llm = init_bedrock_llm(model)
                 case ModelProvider.VERTEX:
-                    credentials = service_account.Credentials.from_service_account_info(model.config)
-                    vertex_setup = {
-                        "credentials": credentials,
-                        "model_name": model.identifier,
-                        "project": model.config["project_id"],
-                        "max_output_tokens": MAX_TOKENS,
-                        "streaming": True,
-                        "safety_settings": VERTEX_SAFETY_CONFIG,
-                        "convert_system_message_to_human": True,
-                    }
-                    if "location" in model.config:
-                        vertex_setup["location"] = model.config["location"]
-                    llm = ChatVertexAI(**vertex_setup)
+                    llm = init_vertex_llm(model)
                 case ModelProvider.HUGGINGFACE:
                     config = HuggingfaceModelConfig(**model.config)
                     llm = HuggingFaceEndpoint(

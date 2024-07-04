@@ -46,7 +46,7 @@ class Model(BaseModel):
     description: str | None = None
     location: str
     identifier: str = Field(exclude=True)
-    config: dict[str, str] | None = Field(None, exclude=True)
+    config: dict[str, str] = Field(exclude=True)
 
 
 class AzureModelConfig(BaseModel):

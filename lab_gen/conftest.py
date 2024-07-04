@@ -46,7 +46,7 @@ async def client(
 
 
 @pytest.fixture()
-def mock_openai_chatcompletion(monkeypatch) -> None:  # noqa: PT004, ANN001
+def mock_openai_chatcompletion(monkeypatch) -> None:  # noqa: PT004, ANN001, C901
     """
     A pytest fixture that mocks the openai chat completion for testing purposes.
 
@@ -146,6 +146,12 @@ def mock_openai_chatcompletion(monkeypatch) -> None:  # noqa: PT004, ANN001
 
         def __aiter__(self):  # noqa: ANN204
             return self
+
+        async def __aenter__(self): # noqa: ANN204
+            return self
+
+        async def __aexit__(self, exc_type, exc_val, exc_tb): # noqa: ANN204, ANN001
+            pass
 
         async def __anext__(self):  # noqa: ANN204
             if self.chunk_index < len(self.chunks):

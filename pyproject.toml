@@ -8,36 +8,37 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.11"
-pydantic = "^2.4.2"
-pydantic-settings = "^2.0.3"
-fastapi = "^0.100.0"
-uvicorn = { version = "^0.22.0", extras = ["standard"] }
-opentelemetry-api = "^1.22.0"
-opentelemetry-sdk = "^1.22.0"
-opentelemetry-exporter-otlp = "^1.22.0"
-opentelemetry-instrumentation = "^0.43b0"
-opentelemetry-instrumentation-fastapi = "^0.43b0"
-opentelemetry-instrumentation-logging = "^0.43b0"
+pydantic = "^2.7.4"
+pydantic-settings = "^2.3.3"
+fastapi = "^0.111.0"
+uvicorn = { version = "^0.30.1", extras = ["standard"] }
+opentelemetry-api = "^1.25.0"
+opentelemetry-sdk = "^1.25.0"
+opentelemetry-exporter-otlp = "^1.25.0"
+opentelemetry-instrumentation = "^0.46b0"
+opentelemetry-instrumentation-fastapi = "^0.46b0"
+opentelemetry-instrumentation-logging = "^0.46b0"
 ujson = "^5.8.0"
-openai = "^1.3.8"
-python-multipart = "^0.0.6"
+openai = "^1.35.10"
+python-multipart = "^0.0.9"
 python-jose = {version = "^3.3.0", extras = ["cryptography"]}
 azure-appconfiguration = "^1.5.0"
 slowapi = "^0.1.8"
-azure-monitor-opentelemetry = "^1.3.0"
-tiktoken = "^0.5.2"
-langchain = "^0.1.14"
+azure-monitor-opentelemetry = "^1.6.0"
+tiktoken = "^0.7.0"
+langchain-core = "^0.2.11"
+langchain-aws = "^0.1.9"
+langchain-openai = "^0.1.14"
+langchain-google-vertexai = "^1.0.6"
+langchain-community = "^0.2.6"
+langchain-mistralai = "^0.1.9"
 boto3 = "^1.34.21"
-langchain-openai = "^0.0.3"
-anthropic = "^0.12.0"
+anthropic = "^0.30.1"
 loguru = "^0.7.2"
 azure-cosmos = "^4.5.1"
-langchain-google-vertexai = "^0.0.3"
-huggingface-hub = "^0.20.3"
-langchain-community = "^0.0.31"
+huggingface-hub = "^0.23.4"
 transformers = "^4.37.2"
 langsmith = "^0.1.49"
-langchain-aws = "^0.1.4"
 
 [tool.poetry.group.dev]
 optional = true
@@ -46,22 +47,22 @@ optional = true
 optional = true
 
 [tool.poetry.group.dev.dependencies]
-black = "^23.9.1"
-ruff = "0.4.2"
+black = "^24.4.2"
+ruff = "^0.5.0"
 mypy = "^1.1.1"
 isort = "^5.11.4"
 pre-commit = "^3.0.1"
 autoflake = "^2.2.1"
 devtools = "^0.12.2"
-mysql-connector-python = "8.3.0"
+mysql-connector-python = "9.0.0"
 
 [tool.poetry.group.test.dependencies]
-pytest = "^7.4.2"
-pytest-env = "^0.8.1"
-pytest-cov = "^4.1.0"
+pytest = "^8.2.2"
+pytest-env = "^1.1.3"
+pytest-cov = "^5.0.0"
 pytest-azurepipelines = "^1.0.5"
 anyio = "^4.0.0"
-httpx = "^0.23.3"
+httpx = "^0.25.2"
 
 [tool.isort]
 line_length=120
@@ -123,7 +124,7 @@ filterwarnings = [
 env = [
     "LAB_GEN_ENVIRONMENT=pytest",
     "AZURE_APP_API_KEY=pytest_key",
-    "R:AZURE_MODELS=[{\"provider\": \"AZURE\",\"variant\": \"GENERAL\",\"identifier\": \"gpt-35-1106\",\"description\": \"OpenAI GPT-3.5 Turbo powered\", \"location\":\"UK\",\"config\": {\"AZURE_OPENAI_API_KEY\": \"ef1\", \"AZURE_OPENAI_ENDPOINT\": \"test-openai-service.openai.azure.com\",\"AZURE_OPENAI_API_VERSION\": \"2023-07-01-preview\"}}]"
+    "R:AZURE_MODELS=[{\"provider\": \"AZURE\",\"variant\": \"GENERAL\",\"family\": \"GPT\",\"identifier\": \"gpt-35-1106\",\"description\": \"OpenAI GPT-3.5 Turbo powered\", \"location\":\"UK\",\"config\": {\"AZURE_OPENAI_API_KEY\": \"ef1\", \"AZURE_OPENAI_ENDPOINT\": \"test-openai-service.openai.azure.com\",\"AZURE_OPENAI_API_VERSION\": \"2023-07-01-preview\"}}]"
 ]
 
 [tool.coverage.report]

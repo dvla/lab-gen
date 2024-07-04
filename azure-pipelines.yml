@@ -54,6 +54,7 @@ stages:
     - script: |
         pipx install poetry
         poetry install --with=dev,test
+        poetry show --outdated --with=dev,test
       displayName: "Install dependencies"
 
     - script: |
