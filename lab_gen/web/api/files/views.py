@@ -130,10 +130,10 @@ async def start_file_conversation(  # noqa: D417
             config = conversation.generate_config(meta, conversation_id, llm)
             return StreamingResponseWithStatusCode(
                 stream_chain_response(
-                chain,
-                variables=input_variables,
-                config=config,
-                metrics=metrics,
+                    chain,
+                    variables=input_variables,
+                    config=config,
+                    metrics=metrics,
                 ),
                 headers={CONVERSATION_ID: conversation_id},
                 media_type=constants.TEXT_MEDIA_TYPE,

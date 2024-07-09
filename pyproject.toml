@@ -39,6 +39,7 @@ azure-cosmos = "^4.5.1"
 huggingface-hub = "^0.23.4"
 transformers = "^4.37.2"
 langsmith = "^0.1.49"
+langfuse = "^2.38.0"
 
 [tool.poetry.group.dev]
 optional = true

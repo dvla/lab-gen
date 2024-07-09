@@ -1,3 +1,4 @@
+import os
 import uuid
 
 from typing import Any
@@ -16,6 +17,7 @@ from langchain_core.prompts import (
 )
 from langchain_core.runnables import ConfigurableFieldSpec
 from langchain_core.runnables.history import RunnableWithMessageHistory
+from langfuse.callback import CallbackHandler
 
 from lab_gen.datatypes.errors import NoConversationError
 from lab_gen.datatypes.metadata import ConversationMetadata
@@ -36,7 +38,6 @@ SYSTEM_MESSAGE = SystemMessage(
     content="You are a helpful AI bot, gifted at answering questions.",
 )
 
-
 class ConversationService:
     """Represents a conversation service."""
 
@@ -45,8 +46,7 @@ class ConversationService:
         self.examples = examples
         self.prompts = prompts
 
-    def create_chain(
-        self, llm: BaseLanguageModel, prompt: ChatPromptTemplate) -> RunnableWithMessageHistory:
+    def create_chain(self, llm: BaseLanguageModel, prompt: ChatPromptTemplate) -> RunnableWithMessageHistory:
         """
         Create a chain to process a prompt and return a `RunnableWithMessageHistory` object.
 
@@ -112,8 +112,17 @@ class ConversationService:
                 blocked_content_counter = BedrockBlockedContentTracker(llm)
             case _:
                 blocked_content_counter = BlockedContentTracker(llm)
+
+        callbacks = [metrics_counter, blocked_content_counter]
+
+        if os.getenv("LANGFUSE_HOST"):
+            langfuse_handler = CallbackHandler()
+            langfuse_handler.user_id = meta.business_user
+            langfuse_handler.session_id = conversation_id
+            callbacks.append(langfuse_handler)
+
         return {
-            "callbacks": [metrics_counter, blocked_content_counter],
+            "callbacks": callbacks,
             "configurable": {
                 "user_id": meta.business_user,
                 "conversation_id": conversation_id,
@@ -146,7 +155,9 @@ class ConversationService:
             messages.append(("human", "{input}"))
 
         chat_prompt = ChatPromptTemplate.from_messages(messages)
-        chain_with_history = self.create_chain(llm, chat_prompt)
+        chain_with_history = self.create_chain(llm, chat_prompt).with_config(
+            {"metadata": {"prompt_id": prompt_id}},
+        )
         self.app.state.metrics_provider.increment(Metric.COUNT_CHAT_REQUESTS, meta.model_dump())
 
         config = self.generate_config(meta, conversation_id, llm)

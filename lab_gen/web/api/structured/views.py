@@ -38,6 +38,7 @@ metrics_service = Annotated[MetricsService, Depends(metrics_provider)]
 lenient_parser = JsonOutputParser(pydantic_object=Call)
 strict_parser = StrictJsonOutputParser(pydantic_object=Call)
 
+STRUCTURED_PROMPT = "structured_call_summary"
 
 @router.post(
     "/structured/call",
@@ -102,13 +103,14 @@ async def call_handler(
 
         if llm:
             config = conversation.generate_config(meta, conversation_id, llm)
-            prompt = conversation.get_prompt("structured_call_summary")
+            prompt = conversation.get_prompt(STRUCTURED_PROMPT)
             messages = [
                 HumanMessagePromptTemplate(prompt=prompt),
             ]
             chat_prompt = ChatPromptTemplate.from_messages(messages)
-
-            chain_with_history = conversation.create_chain(llm, chat_prompt)
+            chain_with_history = conversation.create_chain(llm, chat_prompt).with_config(
+                {"metadata": {"prompt_id": STRUCTURED_PROMPT}},
+            )
             response = chain_with_history.invoke(input_variables, config=config)
 
             try:
@@ -122,7 +124,10 @@ async def call_handler(
             except ValidationError:
                 logger.debug("Before: " + json.dumps(response_json, sort_keys=True, indent=4))
                 fixing_parser = OutputFixingParser.from_llm(
-                    llm=llm, parser=strict_parser, prompt=strict_parser.prompt, max_retries=3,
+                    llm=llm,
+                    parser=strict_parser,
+                    prompt=strict_parser.prompt,
+                    max_retries=3,
                 )
                 response_json = fixing_parser.parse(response_json)
                 logger.debug("After: " + json.dumps(response_json, sort_keys=True, indent=4))

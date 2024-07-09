@@ -339,6 +339,17 @@ opentelemetry-sdk = ">=1.21,<2.0"
 psutil = ">=5.9,<6.0"
 
 [[package]]
+name = "backoff"
+version = "2.2.1"
+description = "Function decoration for backoff and retry"
+optional = false
+python-versions = ">=3.7,<4.0"
+files = [
+    {file = "backoff-2.2.1-py3-none-any.whl", hash = "sha256:63579f9a0628e06278f7e47b7d7d5b6ce20dc65c5e96a6f3ca99a6adca0396e8"},
+    {file = "backoff-2.2.1.tar.gz", hash = "sha256:03f829f5bb1923180821643f8753b0502c3b682293992485b0eef2807afa5cba"},
+]
+
+[[package]]
 name = "black"
 version = "24.4.2"
 description = "The uncompromising code formatter."
@@ -2093,6 +2104,31 @@ files = [
 langchain-core = ">=0.2.10,<0.3.0"
 
 [[package]]
+name = "langfuse"
+version = "2.38.0"
+description = "A client library for accessing langfuse"
+optional = false
+python-versions = "<4.0,>=3.8.1"
+files = [
+    {file = "langfuse-2.38.0-py3-none-any.whl", hash = "sha256:9e81757b88d26acb8949dbd1d25153df49f4ce8da39e5347c4aa23c3b9d4559c"},
+    {file = "langfuse-2.38.0.tar.gz", hash = "sha256:0022a805a167d2e436759ac48b5efb45db2910b02e2f934e47eaf481ad3b21f5"},
+]
+
+[package.dependencies]
+anyio = ">=4.4.0,<5.0.0"
+backoff = ">=1.10.0"
+httpx = ">=0.15.4,<1.0"
+idna = ">=3.7,<4.0"
+packaging = ">=23.2,<24.0"
+pydantic = ">=1.10.7,<3.0"
+wrapt = ">=1.14,<2.0"
+
+[package.extras]
+langchain = ["langchain (>=0.0.309)"]
+llama-index = ["llama-index (>=0.10.12,<2.0.0)"]
+openai = ["openai (>=0.27.8)"]
+
+[[package]]
 name = "langsmith"
 version = "0.1.83"
 description = "Client library to connect to the LangSmith LLM Tracing and Evaluation Platform."
@@ -3038,13 +3074,13 @@ files = [
 
 [[package]]
 name = "packaging"
-version = "24.1"
+version = "23.2"
 description = "Core utilities for Python packages"
 optional = false
-python-versions = ">=3.8"
+python-versions = ">=3.7"
 files = [
-    {file = "packaging-24.1-py3-none-any.whl", hash = "sha256:5b8f2217dbdbd2f7f384c41c628544e6d52f2d0f53c6d0c3ea61aa5d1d7ff124"},
-    {file = "packaging-24.1.tar.gz", hash = "sha256:026ed72c8ed3fcce5bf8950572258698927fd1dbda10a5e981cdf0ac37f4f002"},
+    {file = "packaging-23.2-py3-none-any.whl", hash = "sha256:8c491190033a9af7e1d931d0b5dacc2ef47509b34dd0de67ed209b5203fc88c7"},
+    {file = "packaging-23.2.tar.gz", hash = "sha256:048fb0e9405036518eaaf48a55953c750c11e1a1b68e0dd1a9d62ed0c092cfc5"},
 ]
 
 [[package]]
@@ -5028,4 +5064,4 @@ test = ["big-O", "importlib-resources", "jaraco.functools", "jaraco.itertools", 
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "fc0a34d61284c67ee789c7f8245b0f9330b87fcf8a0e88a438e4b7a267185240"
+content-hash = "d7e53a5f02b86c7ef1952f696404cd1dfbec3bc57b589e570d27bfca7b42b3ed"

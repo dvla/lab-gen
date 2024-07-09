@@ -143,6 +143,16 @@ For running tests on your local machine.
 pytest -vv
 ```
 
+## Langfuse
+
+Langfuse tracks traces of LLM calls. Traces can be view at [Langfuse Cloud](https://cloud.langfuse.com). You need to add the following to ```.env```.
+
+```bash
+LANGFUSE_SECRET_KEY="secret-key" # available from langfuse cloud Settings
+LANGFUSE_PUBLIC_KEY="public-key" # available from langfuse cloud Settings
+LANGFUSE_HOST="langfuse host url" # available from langfuse cloud Settings
+```
+
 ## License
 The MIT License (MIT)
 
