@@ -62,6 +62,10 @@ stages:
       displayName: "pylint"
 
     - script: |
+        poetry run pre-commit run --all-files
+      displayName: "Check All Files"
+
+    - script: |
         cp example.env .env
         mkdir secrets
         poetry run pytest -vv

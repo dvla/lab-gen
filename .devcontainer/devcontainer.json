@@ -11,9 +11,6 @@
         },
         "LAB_GEN_SESSION_STORE_KEY": {
             "description": "The key to the cosmosdb session store., e.g. 0177EK4Q=="
-        },
-        "AZURE_MODELS": {
-            "description": "The configuration of the LLM models. A list of models, but doesn't have to be azure."
         }
     },
     "features": {
