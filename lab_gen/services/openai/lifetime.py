@@ -5,7 +5,7 @@ from fastapi import FastAPI
 from loguru import logger
 from openai import AsyncAzureOpenAI, AsyncOpenAI
 
-from lab_gen.datatypes.models import AzureModelConfig, ModelProvider, ModelVariant
+from lab_gen.datatypes.models import AzureModelConfig, ModelFamily, ModelProvider, ModelVariant
 from lab_gen.settings import settings
 
 
@@ -42,7 +42,9 @@ def init_openai(app: FastAPI) -> None:  # noqa: ARG001
     :param app: current fastapi application.
     """
     for model in settings.models:
-        if model.provider == ModelProvider.AZURE and model.config is not None:
+        if model.provider == (ModelProvider.AZURE
+                              and model.family == ModelFamily.GPT
+                              and model.config is not None):
             config = AzureModelConfig(**model.config)
             key = model.provider.value + model.variant.value
             client = AsyncAzureOpenAI(

@@ -25,6 +25,8 @@ class ModelFamily(Enum):
     CLAUDE = "CLAUDE"
     GEMINI = "GEMINI"
     MISTRAL = "MISTRAL"
+    LLAMA = "LLAMA"
+    PHI = "PHI"
     UNSPECIFIED = "UNSPECIFIED"
 
 
@@ -56,6 +58,11 @@ class AzureModelConfig(BaseModel):
     api_key: str = Field(alias="AZURE_OPENAI_API_KEY")
     api_version: str = Field(alias="AZURE_OPENAI_API_VERSION")
 
+class AzureMLModelConfig(BaseModel):
+    """Represents an Azure ML Serverless model config."""
+
+    endpoint: str = Field(alias="AZUREAI_ENDPOINT")
+    api_key: str = Field(alias="AZUREAI_API_KEY")
 
 class BedrockModelConfig(BaseModel):
     """Represents a model config for AWS Bedrock runtime."""

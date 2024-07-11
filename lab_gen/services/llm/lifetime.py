@@ -4,17 +4,22 @@ import boto3
 
 from google.oauth2 import service_account
 from langchain_aws.chat_models.bedrock import ChatBedrock
+from langchain_community.chat_models.azureml_endpoint import AzureMLChatOnlineEndpoint, CustomOpenAIChatContentFormatter
 from langchain_community.llms import HuggingFaceEndpoint
-from langchain_core.language_models import BaseLanguageModel
+from langchain_community.llms.azureml_endpoint import AzureMLEndpointApiType
+from langchain_core.language_models import BaseChatModel, BaseLanguageModel
 from langchain_google_vertexai import ChatVertexAI, HarmBlockThreshold, HarmCategory
+from langchain_mistralai.chat_models import ChatMistralAI
 from langchain_openai import AzureChatOpenAI
 from loguru import logger
 
 from lab_gen.datatypes.models import (
+    AzureMLModelConfig,
     AzureModelConfig,
     BedrockModelConfig,
     HuggingfaceModelConfig,
     Model,
+    ModelFamily,
     ModelProvider,
     ModelVariant,
 )
@@ -56,7 +61,7 @@ def get_llm(provider: ModelProvider, variant: ModelVariant) -> BaseLanguageModel
     return None
 
 
-def init_azure_llm(model: Model) -> AzureChatOpenAI:
+def init_azure_llm(model: Model) -> BaseChatModel:
     """
     Initialize the LLM running on Azure.
 
@@ -66,6 +71,26 @@ def init_azure_llm(model: Model) -> AzureChatOpenAI:
     Returns:
         AzureChatOpenAI: The initialized Azure LLM.
     """
+    if model.family == ModelFamily.MISTRAL:
+        config = AzureMLModelConfig(**model.config)
+        return ChatMistralAI(
+            endpoint=config.endpoint,
+            api_key=config.api_key,
+            max_tokens=MAX_TOKENS,
+            temperature=0,
+            streaming=True,
+        )
+
+    if (model.family == ModelFamily.PHI or model.family == ModelFamily.LLAMA): # noqa: PLR1714
+        config = AzureMLModelConfig(**model.config)
+        return AzureMLChatOnlineEndpoint(
+            endpoint_url=config.endpoint,
+            endpoint_api_type=AzureMLEndpointApiType.serverless,
+            endpoint_api_key=config.api_key,
+            content_formatter=CustomOpenAIChatContentFormatter(),
+        )
+
+    # Default to Azure OpenAI
     config = AzureModelConfig(**model.config)
     return AzureChatOpenAI(
         verbose=True,
