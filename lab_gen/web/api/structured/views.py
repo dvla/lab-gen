@@ -123,11 +123,20 @@ async def call_handler(
                 metrics.increment(Metric.COUNT_SUCCESSFUL_JSON, config["configurable"]["metadata"])
             except ValidationError:
                 logger.debug("Before: " + json.dumps(response_json, sort_keys=True, indent=4))
+
+                """
+                TEMPORARY CHANGE TO STRICT PARSER PROMPT
+                Awaiting Langchain fix to a bug causing the parser to fail
+                due to expecting 'input' and not 'completion'.
+                https://github.com/langchain-ai/langchain/pull/23967
+                When PR is merged and released, the input variable can be reverted to 'completion'
+                in the STRICT_FIX prompt in parsers.py and this comment can be removed.
+                """
                 fixing_parser = OutputFixingParser.from_llm(
                     llm=llm,
                     parser=strict_parser,
                     prompt=strict_parser.prompt,
-                    max_retries=3,
+                    max_retries=2,
                 )
                 response_json = fixing_parser.parse(response_json)
                 logger.debug("After: " + json.dumps(response_json, sort_keys=True, indent=4))

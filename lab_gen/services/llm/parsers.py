@@ -1,6 +1,7 @@
 from typing import Any
 
 from langchain_core.exceptions import OutputParserException
+from langchain_core.messages import AIMessage
 from langchain_core.output_parsers import JsonOutputParser
 from langchain_core.prompts.prompt import PromptTemplate
 from langchain_core.pydantic_v1 import ValidationError
@@ -17,7 +18,7 @@ Instructions:
 --------------
 Completion:
 --------------
-{completion}
+{input}
 --------------
 
 Above, the Completion did not satisfy the constraints given in the Instructions.
@@ -56,8 +57,10 @@ class StrictJsonOutputParser(JsonOutputParser):
         """
         try:
             json_to_parse = to_parse
-            if isinstance(to_parse, str):
-                json_to_parse = super().parse(to_parse)
+            if isinstance(to_parse, AIMessage) and to_parse.content:
+                json_to_parse = to_parse.content
+            if isinstance(json_to_parse, str):
+                json_to_parse = super().parse(json_to_parse)
             self.pydantic_object.parse_obj(json_to_parse)
             return json_to_parse  # noqa: TRY300
         except ValidationError as pe:
