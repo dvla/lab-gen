@@ -43,7 +43,6 @@ class CosmosDBChatMessageHistory(BaseChatMessageHistory):
             self._container = database.get_container_client(CONTAINER_NAME)
             self.load_messages()
 
-
     def load_messages(self) -> None:
         """Retrieve the messages from Cosmos."""
         if not self._container:

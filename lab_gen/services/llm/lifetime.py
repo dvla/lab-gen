@@ -13,7 +13,9 @@ from langchain_mistralai.chat_models import ChatMistralAI
 from langchain_openai import AzureChatOpenAI
 from loguru import logger
 
+from lab_gen.datatypes.errors import ModelKeyError
 from lab_gen.datatypes.models import (
+    DEFAULT_MODEL_KEY,
     AzureMLModelConfig,
     AzureModelConfig,
     BedrockModelConfig,
@@ -21,7 +23,6 @@ from lab_gen.datatypes.models import (
     Model,
     ModelFamily,
     ModelProvider,
-    ModelVariant,
 )
 from lab_gen.settings import settings
 
@@ -36,29 +37,47 @@ VERTEX_SAFETY_CONFIG = {
 }
 
 model_providers: dict[str, Any] = {}
+models: dict[str, Model] = {}
 
 
-def get_llm(provider: ModelProvider, variant: ModelVariant) -> BaseLanguageModel | None:
+def get_llm(model_key: str = DEFAULT_MODEL_KEY) -> BaseLanguageModel:
     """
-    Get the LLM for the specified model provider and variant.
+    Get the LLM for the specified model key.
 
     Args:
-        provider (ModelProvider): The model provider.
-        variant (ModelVariant): The model variant.
+        model_key (str): The unique key for the model.
 
     Returns:
-        BaseLanguageModel: The llm for the specified model provider and variant.
+        BaseLanguageModel: The llm for the specified model.
 
     Raises:
-        KeyError: If the specified model provider and variant combination is not found.
+        KeyError: If the specified model is not found.
     """
-    key = provider.value + variant.value
     try:
-        return model_providers[key]
+        return model_providers[model_key]
     except KeyError as ke:
-        logger.warning(f"Unable to find model {key}")
-        raise KeyError(key) from ke
-    return None
+        logger.warning(f"Unable to find llm model {model_key}")
+        raise ModelKeyError(model_key) from ke
+
+
+def get_model(model_key: str = DEFAULT_MODEL_KEY) -> Model:
+    """
+    Get the model definition for the specified model key.
+
+    Args:
+        model_key (str): The unique key for the model.
+
+    Returns:
+        Model: The model definition for the specified key.
+
+    Raises:
+        KeyError: If the specified model is not found.
+    """
+    try:
+        return models[model_key]
+    except KeyError as ke:
+        logger.warning(f"Unable to find model definition for {model_key}")
+        raise ModelKeyError(model_key) from ke
 
 
 def init_azure_llm(model: Model) -> BaseChatModel:
@@ -103,6 +122,7 @@ def init_azure_llm(model: Model) -> BaseChatModel:
         streaming=True,
     )
 
+
 def init_bedrock_llm(model: Model) -> ChatBedrock:
     """
     Initialize the LLM running on Bedrock.
@@ -134,6 +154,7 @@ def init_bedrock_llm(model: Model) -> ChatBedrock:
         bedrock_kwargs["guardrails"] = guardrails
     return ChatBedrock(**bedrock_kwargs)
 
+
 def init_vertex_llm(model: Model) -> ChatVertexAI:
     """
     Initializes and returns a ChatVertexAI instance for the given model.
@@ -159,6 +180,7 @@ def init_vertex_llm(model: Model) -> ChatVertexAI:
         vertex_setup["location"] = model.config["location"]
     return ChatVertexAI(**vertex_setup)
 
+
 def init_models() -> None:
     """
     Loops through the model settings, for each model configures an LLM client.
@@ -168,7 +190,7 @@ def init_models() -> None:
     modelz = settings.models + settings.models_vertex
     for model in modelz:
         if model.config is not None:
-            key = model.provider.value + model.variant.value
+            key = model.key
             llm = None
             match model.provider:
                 case ModelProvider.AZURE:
@@ -185,6 +207,7 @@ def init_models() -> None:
             if llm is not None:
                 logger.debug(f"Configuring LLM for {key} {model.identifier}")
                 model_providers[key] = llm
+                models[key] = model
 
     if len(model_providers) != len(modelz):
         logger.warning(f"Configured {len(model_providers)} LLMs, but provided {len(modelz)} in settings")

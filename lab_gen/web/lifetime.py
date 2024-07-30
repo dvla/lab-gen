@@ -18,7 +18,6 @@ from lab_gen.services.conversation.lifetime import init_conversation
 from lab_gen.services.cosmos.lifetime import init_cosmosdb
 from lab_gen.services.llm.lifetime import init_models
 from lab_gen.services.metrics.lifetime import init_metrics
-from lab_gen.services.openai.lifetime import init_openai
 from lab_gen.settings import settings
 
 
@@ -102,7 +101,6 @@ def register_startup_event(
         app.middleware_stack = None
         setup_opentelemetry(app)
         init_models()
-        init_openai(app)
         await init_conversation(app)
         init_metrics(app)
         init_cosmosdb(app)

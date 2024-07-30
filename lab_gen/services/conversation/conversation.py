@@ -29,7 +29,7 @@ from lab_gen.services.conversation.block_content import (
     VertexBlockedContentTracker,
 )
 from lab_gen.services.cosmos.cosmos_db import CosmosDBChatMessageHistory
-from lab_gen.services.llm.lifetime import get_llm
+from lab_gen.services.llm.lifetime import get_llm, get_model
 from lab_gen.services.metrics.llm_metrics_counter import LLMMetricsCounter
 from lab_gen.services.metrics.metrics import Metric
 
@@ -91,6 +91,26 @@ class ConversationService:
             ],
         )
 
+    def get_metadata(self, model_key: str, business_user: str) -> ConversationMetadata:
+        """
+        Returns the model metadata for the given model key.
+
+        Args:
+            model_key (str): The key of the model.
+            business_user (str): The user associated with the conversation.
+
+        Returns:
+            ConversationMetadata: The details of the model.
+        """
+        model = get_model(model_key)
+        return ConversationMetadata(
+            provider = model.provider,
+            family = model.family,
+            variant = model.variant,
+            modelKey = model_key,
+            business_user = business_user,
+        )
+
     def generate_config(self, meta: ConversationMetadata, conversation_id: str, llm: BaseLanguageModel) -> dict:
         """Generates configuration for a conversation.
 
@@ -145,7 +165,7 @@ class ConversationService:
         Returns the generated conversation ID, config, and ConversationChain.
         """
         conversation_id = str(uuid.uuid4())  # Generate a new UUID
-        llm = get_llm(meta.provider, meta.variant)
+        llm = get_llm(meta.modelKey)
 
         messages = [SYSTEM_MESSAGE]
         if prompt_id != "default":
@@ -175,7 +195,7 @@ class ConversationService:
 
         if history.metadata is not None:
             meta = history.metadata
-            llm = get_llm(meta.provider, meta.variant)
+            llm = get_llm(meta.modelKey)
             self.app.state.metrics_provider.increment(Metric.COUNT_CHAT_REQUESTS, meta.model_dump())
             config = self.generate_config(meta, conversation_id, llm)
         else:

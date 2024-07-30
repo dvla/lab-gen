@@ -8,14 +8,16 @@ from fastapi import Depends, HTTPException, Header
 from fastapi.responses import StreamingResponse
 from fastapi.routing import APIRouter
 from loguru import logger
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from slowapi import Limiter
 from slowapi.util import get_remote_address
 from starlette.requests import Request
-from starlette.status import HTTP_500_INTERNAL_SERVER_ERROR, HTTP_503_SERVICE_UNAVAILABLE
+from starlette.status import HTTP_400_BAD_REQUEST, HTTP_500_INTERNAL_SERVER_ERROR, HTTP_503_SERVICE_UNAVAILABLE
 
-from lab_gen.datatypes.models import Model, ModelProvider, ModelVariant
-from lab_gen.services.openai.lifetime import get_client
+from lab_gen.datatypes.errors import ModelKeyError
+from lab_gen.datatypes.models import DEFAULT_MODEL_KEY, Model
+from lab_gen.services.conversation.conversation import SYSTEM_MESSAGE
+from lab_gen.services.llm.lifetime import get_llm, get_model
 from lab_gen.settings import settings
 from lab_gen.web.auth import get_api_key
 
@@ -51,12 +53,11 @@ class Chat(BaseModel):
     Represents a chat conversation.
 
     Attributes:
-        model_name (str): The name of the model used for chat processing.
+        modelKey: str
         message (list[Message]): The list of messages exchanged in the conversation.
     """
 
-    provider: ModelProvider = ModelProvider.AZURE
-    variant: ModelVariant = ModelVariant.GENERAL
+    modelKey: str = Field(DEFAULT_MODEL_KEY)  # noqa: N815
     messages: list[Message]
 
 
@@ -113,52 +114,51 @@ async def chat_handler(
         completion_tokens_counter = app.state.completion_tokens_counter
 
         # Calculate the number of tokens in the prompt
+        messages = [SYSTEM_MESSAGE]
         for message in chat.messages:
             prompt_tokens += len(encoding.encode(message.content))
+            messages.append((message.role, message.content))
 
         try:
-            client, model_name = get_client(chat.provider, chat.variant)
-            logger.debug(f"User is {x_business_user} and Chat Model name is : {model_name}")
-            stream = await client.chat.completions.create(
-                model=model_name,
-                messages=chat.messages,
-                stream=True,
-            )
+            client = get_llm(chat.modelKey)
+            model = get_model(chat.modelKey)
+            logger.debug(f"User is {x_business_user} and Chat Model name is : {model.identifier}")
 
             # Record the chat request metric with dimensions for business user, environment and model
             chat_requests_counter.add(1, {
                 "business_user": x_business_user,
                 "environment": settings.environment,
-                "model_name": model_name,
+                "model_name": model.identifier,
             })
             # Record the prompt tokens metric
             prompt_tokens_counter.record(prompt_tokens, {
                 "business_user": x_business_user,
                 "environment": settings.environment,
-                "model_name": model_name,
+                "model_name": model.identifier,
             })
 
+        except ModelKeyError as ke:
+            raise HTTPException(HTTP_400_BAD_REQUEST, str(ke)) from ke
         except Exception as e:
-            logger.exception("Error from openAI")
+            logger.exception("Error from chat endpoint")
             raise HTTPException(HTTP_503_SERVICE_UNAVAILABLE, error503) from e
         try:
-            async for chunk in stream:
-                if len(chunk.choices) > 0:
-                    current_content = chunk.choices[0].delta.content
-                    if current_content is not None:
-                        # Calculate the number of tokens in the response
-                        chunk_tokens = encoding.encode(current_content)
-                        completion_tokens += len(chunk_tokens)
-                        yield current_content
+            async for chunk in client.astream(messages):
+                current_content = chunk.content
+                if current_content is not None:
+                    # Calculate the number of tokens in the response
+                    chunk_tokens = encoding.encode(current_content)
+                    completion_tokens += len(chunk_tokens)
+                    yield current_content
         except Exception as e:
-            logger.exception("OpenAI Response (Streaming) Error")
+            logger.exception("Chat endpoint Response (Streaming) Error")
             raise HTTPException(HTTP_500_INTERNAL_SERVER_ERROR, error500) from e
 
         # Record the completion tokens metric
         completion_tokens_counter.record(completion_tokens, {
             "business_user": x_business_user,
             "environment": settings.environment,
-            "model_name": model_name,
+            "model_name": model.identifier,
         })
 
     return StreamingResponse(response_stream(), media_type="text/plain; charset=utf-8")

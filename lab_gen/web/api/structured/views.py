@@ -12,10 +12,11 @@ from langchain_core.output_parsers import JsonOutputParser
 from langchain_core.prompts import ChatPromptTemplate, HumanMessagePromptTemplate
 from langchain_core.pydantic_v1 import ValidationError
 from loguru import logger
-from starlette.status import HTTP_500_INTERNAL_SERVER_ERROR
+from starlette.status import HTTP_400_BAD_REQUEST, HTTP_500_INTERNAL_SERVER_ERROR
 
 from lab_gen.datatypes.calls import Call
-from lab_gen.services.conversation.conversation import ConversationMetadata, ConversationService
+from lab_gen.datatypes.errors import ModelKeyError
+from lab_gen.services.conversation.conversation import ConversationService
 from lab_gen.services.conversation.dependencies import conversation_provider
 from lab_gen.services.llm.lifetime import get_llm
 from lab_gen.services.llm.parsers import StrictJsonOutputParser
@@ -78,6 +79,7 @@ STRUCTURED_PROMPT = "structured_call_summary"
                 },
             },
         },
+        400: {"description": constants.error400},
         422: {"description": constants.error422},
         500: {"description": constants.error500},
         503: {"description": constants.error503},
@@ -94,8 +96,8 @@ async def call_handler(
     """Returns structured response."""
     try:
         conversation_id = str(uuid.uuid4())  # Generate a new UUID
-        meta = ConversationMetadata(provider=request.provider, variant=request.variant, business_user=x_business_user)
-        llm = get_llm(request.provider, request.variant)
+        meta = conversation.get_metadata(model_key=request.modelKey, business_user=x_business_user)
+        llm = get_llm(request.modelKey)
 
         input_variables = {"user_id": x_business_user, "format_instructions": lenient_parser.get_format_instructions()}
         if request.variables:
@@ -153,6 +155,8 @@ async def call_handler(
         else:  # noqa: RET505
             logger.warning("Unable to create llm.")
             raise HTTPException(HTTP_500_INTERNAL_SERVER_ERROR, constants.error501)  # noqa: TRY301
+    except ModelKeyError as ke:
+        raise HTTPException(HTTP_400_BAD_REQUEST, str(ke)) from ke
     except Exception as e:
         logger.exception("Conversation Chain error")
         raise HTTPException(HTTP_500_INTERNAL_SERVER_ERROR, constants.error501) from e

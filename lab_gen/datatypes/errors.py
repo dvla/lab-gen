@@ -8,6 +8,7 @@ class NoConversationError(ValueError):
     def __init__(self, conversation_id: str) -> None:
         super().__init__(f"No conversation found for {conversation_id}")
 
+
 class InvalidParamsError(ValueError):
     """
     Initialize the object with the given parameter.
@@ -18,6 +19,24 @@ class InvalidParamsError(ValueError):
     Returns:
         None
     """
-    def __init__(self, param: str) -> None:
 
+    def __init__(self, param: str) -> None:
         super().__init__(f"{param}")
+
+
+class ModelKeyError(ValueError):
+    """
+    Raises an error when an invalid model key is provided.
+
+    Args:
+        param (str): The invalid model key that caused the error.
+    """
+
+    def __init__(self, param: str) -> None:
+        """
+        Initialize the ModelKeyError with the given model key.
+
+        Args:
+            param (str): The invalid model key that caused the error.
+        """
+        super().__init__(f"Invalid model key {param}")

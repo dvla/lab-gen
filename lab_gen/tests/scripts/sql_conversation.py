@@ -4,7 +4,6 @@ from langchain.chains import create_sql_query_chain
 from langchain_community.agent_toolkits import create_sql_agent
 from langchain_community.utilities import SQLDatabase
 
-from lab_gen.datatypes.models import ModelProvider, ModelVariant
 from lab_gen.services.llm.lifetime import get_llm, init_models
 
 
@@ -12,7 +11,7 @@ DB_NAME = "chinook"
 
 # Initialise the models and retrieve the specified LLM
 init_models()
-llm = get_llm(provider=ModelProvider.AZURE, variant=ModelVariant.GENERAL)
+llm = get_llm()
 
 def init_db(db_name: str) -> SQLDatabase:
     """

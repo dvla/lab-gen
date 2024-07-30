@@ -9,10 +9,11 @@ from langchain_core.messages import HumanMessage, SystemMessage
 from langchain_core.output_parsers import JsonOutputParser
 from langchain_core.prompts import ChatPromptTemplate
 from loguru import logger
-from starlette.status import HTTP_500_INTERNAL_SERVER_ERROR
+from starlette.status import HTTP_400_BAD_REQUEST, HTTP_500_INTERNAL_SERVER_ERROR
 
 from lab_gen.datatypes.calls import Call
-from lab_gen.services.conversation.conversation import ConversationMetadata, ConversationService
+from lab_gen.datatypes.errors import ModelKeyError
+from lab_gen.services.conversation.conversation import ConversationService
 from lab_gen.services.conversation.dependencies import conversation_provider
 from lab_gen.services.llm.lifetime import get_llm
 from lab_gen.services.metrics.dependencies import metrics_provider
@@ -61,13 +62,12 @@ async def start_file_conversation(  # noqa: D417
 ) -> StreamingResponse:
     """Starts a new conversation.
 
-    This initializes a new image based conversation with the specified model provider and variant.
+    This initializes a new image based conversation with the specified model key.
     An image file can be sent as a base64 encoded string.
     The content type of the file is specified using fileContentType.
 
     Arguments:
-        provider: The model provider to use. Defaults to AZURE.
-        variant: The variant of the model to use. Defaults to GENERAL.
+        modelKey : The unique key for the model to use.
         content: The string contents of the message.
         variables: Map of variable names and values.
         promptId: The ID of the prompt to use.
@@ -82,8 +82,7 @@ async def start_file_conversation(  # noqa: D417
     ```
     {
       "content": "What's this?",
-      "provider": "AZURE",
-      "variant": "MULTIMODAL",
+      "modelKey": "AZUREGPTMULTIMODAL",
       "file": "/9j/2wBDAAYEBQYFBAYGBQYHBwYIChAWgbAZNZxWB1rasA//2Q==",
       "fileContentType": "image/png"
     }
@@ -92,16 +91,16 @@ async def start_file_conversation(  # noqa: D417
     """
     logger.debug(f"Has api key {api_key}")
     try:
-        meta = ConversationMetadata(provider=start.provider, variant=start.variant, business_user=x_business_user)
+        meta = conversation.get_metadata(model_key=start.modelKey, business_user=x_business_user)
 
         input_variables = {"user_id": x_business_user}
 
         conversation_id = str(uuid.uuid4())  # Generate a new UUID
-        llm = get_llm(meta.provider, meta.variant)
+        llm = get_llm(start.modelKey)
         content = start.variables.get("input") if start.content is None else start.content
 
         if llm:
-            messages = [SYSTEM_MESSAGE]
+            messages = []
             if start.file is not None:
                 # I had a problem with detecting the optional file string,
                 # the `is_a_file` logic below works.
@@ -141,6 +140,8 @@ async def start_file_conversation(  # noqa: D417
         else:  # noqa: RET505
             logger.warning("Unable to create llm.")
             raise HTTPException(HTTP_500_INTERNAL_SERVER_ERROR, constants.error501)  # noqa: TRY301
+    except ModelKeyError as ke:
+        raise HTTPException(HTTP_400_BAD_REQUEST, str(ke)) from ke
     except Exception as e:
         logger.exception("Conversation Chain error")
         raise HTTPException(HTTP_500_INTERNAL_SERVER_ERROR, constants.error503) from e

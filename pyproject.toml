@@ -26,20 +26,20 @@ azure-appconfiguration = "^1.5.0"
 slowapi = "^0.1.8"
 azure-monitor-opentelemetry = "^1.6.0"
 tiktoken = "^0.7.0"
-langchain-core = "^0.2.11"
-langchain-aws = "^0.1.9"
-langchain-openai = "^0.1.14"
+langchain-core = "^0.2.21"
+langchain-aws = "^0.1.11"
+langchain-openai = "^0.1.17"
 langchain-google-vertexai = "^1.0.6"
-langchain-community = "^0.2.6"
-langchain-mistralai = "^0.1.9"
+langchain-community = "^0.2.7"
+langchain-mistralai = "^0.1.10"
 boto3 = "^1.34.21"
 anthropic = "^0.30.1"
 loguru = "^0.7.2"
 azure-cosmos = "^4.5.1"
 huggingface-hub = "^0.23.4"
 transformers = "^4.37.2"
-langsmith = "^0.1.49"
-langfuse = "^2.38.0"
+langsmith = "^0.1.90"
+langfuse = "^2.39.2"
 
 [tool.poetry.group.dev]
 optional = true
@@ -49,7 +49,7 @@ optional = true
 
 [tool.poetry.group.dev.dependencies]
 black = "^24.4.2"
-ruff = "^0.5.0"
+ruff = "^0.5.2"
 mypy = "^1.1.1"
 isort = "^5.11.4"
 pre-commit = "^3.0.1"
@@ -125,7 +125,7 @@ filterwarnings = [
 env = [
     "LAB_GEN_ENVIRONMENT=pytest",
     "AZURE_APP_API_KEY=pytest_key",
-    "R:AZURE_MODELS=[{\"provider\": \"AZURE\",\"variant\": \"GENERAL\",\"family\": \"GPT\",\"identifier\": \"gpt-35-1106\",\"description\": \"OpenAI GPT-3.5 Turbo powered\", \"location\":\"UK\",\"config\": {\"AZURE_OPENAI_API_KEY\": \"ef1\", \"AZURE_OPENAI_ENDPOINT\": \"test-openai-service.openai.azure.com\",\"AZURE_OPENAI_API_VERSION\": \"2023-07-01-preview\"}}]"
+    "R:AZURE_MODELS=[{\"provider\": \"AZURE\",\"variant\": \"GENERAL\",\"family\": \"GPT\",\"identifier\": \"gpt-35-1106\",\"description\": \"OpenAI GPT-3.5 Turbo powered\", \"location\":\"UK\",\"config\": {\"AZURE_OPENAI_API_KEY\": \"ef1\", \"AZURE_OPENAI_ENDPOINT\": \"test-openai-service.openai.azure.com\",\"AZURE_OPENAI_API_VERSION\": \"2023-07-01-preview\"}}, {\"provider\": \"BEDROCK\",\"variant\": \"ADVANCED\",\"family\": \"CLAUDE\",\"identifier\": \"anthropic.claude-instant-v1\",\"description\": \"anthropic.claude-instant\", \"location\": \"Frankfurt\",\"config\": {\"AWS_REGION\": \"eu-central-1\",\"AWS_ACCESS_KEY_ID\": \"IMVZ111111\",\"AWS_SECRET_ACCESS_KEY\": \"3cSofg111111\"}}]"
 ]
 
 [tool.coverage.report]

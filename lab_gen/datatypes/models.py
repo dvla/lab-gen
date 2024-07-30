@@ -1,6 +1,6 @@
 from enum import Enum
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, computed_field
 
 
 class ModelVariant(Enum):
@@ -11,6 +11,7 @@ class ModelVariant(Enum):
     MULTIMODAL = "MULTIMODAL"
     EXPERIMENTAL = "EXPERIMENTAL"
 
+
 class ModelProvider(Enum):
     """Represents different model providers."""
 
@@ -18,6 +19,7 @@ class ModelProvider(Enum):
     BEDROCK = "BEDROCK"
     VERTEX = "VERTEX"
     HUGGINGFACE = "HUGGINGFACE"
+
 
 class ModelFamily(Enum):
     """Represents the different model families."""
@@ -50,6 +52,31 @@ class Model(BaseModel):
     identifier: str = Field(exclude=True)
     config: dict[str, str] = Field(exclude=True)
 
+    @staticmethod
+    def compute_key(provider: ModelProvider, variant: ModelVariant, family: ModelFamily) -> str:
+        """
+        Compute the key for the model.
+
+        Args:
+            provider (ModelProvider): The model provider.
+            variant (ModelVariant): The model variant.
+            family (ModelFamily): The model family.
+
+        Returns:
+            str: The computed key.
+        """
+        return provider.value + family.value + variant.value
+
+    @computed_field
+    def key(self) -> str:
+        """
+        The unique key for the model.
+
+        Returns:
+            str: The computed key.
+        """
+        return Model.compute_key(self.provider, self.variant, self.family)
+
 
 class AzureModelConfig(BaseModel):
     """Represents an Azure model config."""
@@ -71,7 +98,11 @@ class BedrockModelConfig(BaseModel):
     aws_access_key_id: str = Field(alias="AWS_ACCESS_KEY_ID")
     aws_secret_access_key: str = Field(alias="AWS_SECRET_ACCESS_KEY")
 
+
 class HuggingfaceModelConfig(BaseModel):
     """Represents a model config for Huggingface."""
     repo_id: str = Field(alias="HF_REPO_ID")
     access_token: str = Field(alias="HF_TOKEN")
+
+
+DEFAULT_MODEL_KEY = Model.compute_key(ModelProvider.AZURE, ModelVariant.GENERAL, ModelFamily.GPT)

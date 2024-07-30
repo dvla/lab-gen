@@ -82,6 +82,7 @@ class MetricsService:
                 counter.add(value, {
                     "business_user": meta["business_user"],
                     "environment": settings.environment,
+                    "family": meta["family"].value,
                     "provider": meta["provider"].value,
                     "variant": meta["variant"].value,
                 })
@@ -106,6 +107,7 @@ class MetricsService:
                 histogram.record(value, {
                     "business_user": meta["business_user"],
                     "environment": settings.environment,
+                    "family": meta["family"].value,
                     "provider": meta["provider"].value,
                     "variant": meta["variant"].value,
                 })

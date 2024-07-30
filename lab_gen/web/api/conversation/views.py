@@ -15,11 +15,10 @@ from starlette.status import (
     HTTP_503_SERVICE_UNAVAILABLE,
 )
 
-from lab_gen.datatypes.errors import InvalidParamsError, NoConversationError
+from lab_gen.datatypes.errors import InvalidParamsError, ModelKeyError, NoConversationError
 from lab_gen.datatypes.metadata import ContentType
-from lab_gen.datatypes.models import ModelProvider, ModelVariant
+from lab_gen.datatypes.models import DEFAULT_MODEL_KEY
 from lab_gen.services.conversation.conversation import (
-    ConversationMetadata,
     ConversationService,
 )
 from lab_gen.services.conversation.dependencies import conversation_provider
@@ -65,14 +64,12 @@ class ConversationRequest(BaseModel):
 
     Attributes:
         content (str | None): The string contents of the message. Defaults to None.
-        provider (ModelProvider): The model provider to use. Defaults to ModelProvider.AZURE.
-        variant (ModelVariant): The variant of the model to use. Defaults to ModelVariant.GENERAL.
+        modelKey (str): The unique key for the model to use.
         variables (dict[str, str] | None): Map of variable names and values. Defaults to None.
     """
 
     content: str | None = None
-    provider: ModelProvider = ModelProvider.AZURE
-    variant: ModelVariant = ModelVariant.GENERAL
+    modelKey: str = Field(DEFAULT_MODEL_KEY)  # noqa: N815
     variables: dict[str, str] | None = Field(None)
 
 class ConversationContinueRequest(BaseModel):
@@ -87,12 +84,11 @@ class ConversationContinueRequest(BaseModel):
 
 class ConversationStartRequest(ConversationRequest):
     """
-    Model for initiating a new conversation with optional variables and specified model provider and variant.
+    Model for initiating a new conversation with optional variables and specified model key.
 
     Attributes:
         promptId (str): The ID of the prompt to use. Defaults to "DEFAULT".
-        provider (ModelProvider): The model provider to use. Defaults to ModelProvider.AZURE.
-        variant (ModelVariant): The variant of the model to use. Defaults to ModelVariant.GENERAL.
+        modelKey (str): The unique key for the model to use.
         variables (dict[str, str] | None): Map of variable names and values. Defaults to None.
     """
 
@@ -135,7 +131,7 @@ def get_error_message(exception: Exception) -> str:
         return exception.body["message"]
     except AttributeError:
         # Fallback to a generic error message if attribute 'body' does not exist
-        return exception
+        return str(exception)
 
 
 async def stream_chain_response(
@@ -167,7 +163,7 @@ async def stream_chain_response(
         async for chunk in chain.astream(variables, config=config):
             yield (chunk, OK_STATUS_CODE)
     except Exception as e:  # noqa: BLE001
-        logger.warning(f"Error occurred: {e}")
+        logger.error(f"Error occurred: {e}")
 
         if not blocked_counter.has_blocked:
             metrics.increment(Metric.COUNT_ERRORS, meta)
@@ -201,12 +197,11 @@ async def start_conversation(  # noqa: D417
 ) -> StreamingResponse:
     """Starts a new conversation.
 
-    This initializes a new conversation with the specified model provider and variant.
+    This initializes a new conversation with the specified model key.
     It returns a conversation ID that can be used to continue the conversation.
 
     Arguments:
-        provider: The model provider to use. Defaults to AZURE.
-        variant: The variant of the model to use. Defaults to GENERAL.
+        modelKey: The unique key for the model to use.
         content: The string contents of the message.
         variables: Map of variable names and values.
         promptId: The ID of the prompt to use.
@@ -218,8 +213,7 @@ async def start_conversation(  # noqa: D417
     Example Prompt call:
     ```
     {
-        "provider": "AZURE",
-        "variant": "ADVANCED",
+        "modelKey": "AZUREGPTADVANCED",
         "promptId": "alliteration",
         "variables": {
             "input": "This is a great Lab demo. I feel I am learning lots"
@@ -236,12 +230,11 @@ async def start_conversation(  # noqa: D417
         }
     }
     ```
-    Example Variant:
+    Example Variant, get the model key from the call to GET /models:
     ```
     {
         "content": "When did AWS start?",
-        "provider": "BEDROCK",
-        "variant": "GENERAL"
+        "modelKey": "BEDROCKCLAUDEGENERAL"
     }
     ```
     Simple call:
@@ -254,7 +247,7 @@ async def start_conversation(  # noqa: D417
     """
     logger.debug(f"Has api key {api_key}")
     try:
-        meta = ConversationMetadata(provider=start.provider, variant=start.variant, business_user=x_business_user)
+        meta = conversation.get_metadata(model_key=start.modelKey, business_user=x_business_user)
         config, conversation_id, chain = conversation.start(
             meta,
             start.promptId.lower(),
@@ -274,6 +267,8 @@ async def start_conversation(  # noqa: D417
             headers={CONVERSATION_ID: conversation_id},
             media_type=constants.TEXT_MEDIA_TYPE,
         )
+    except ModelKeyError as ke:
+        raise HTTPException(HTTP_400_BAD_REQUEST, str(ke)) from ke
     except Exception as e:
         logger.exception("Conversation Chain error")
         raise HTTPException(HTTP_500_INTERNAL_SERVER_ERROR, constants.error503) from e
@@ -293,7 +288,7 @@ async def start_conversation(  # noqa: D417
 )
 async def continue_conversation(  # noqa: D417, PLR0913
     conversationId: str,  # noqa: N803
-    convo: ConversationRequest,
+    convo: ConversationContinueRequest,
     x_business_user: Annotated[str, Header()],
     *,
     api_key: key_check,
