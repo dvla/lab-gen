@@ -150,7 +150,7 @@ class Settings(BaseSettings):
     )
 
     @classmethod
-    def settings_customise_sources(  # noqa: D102, PLR0913
+    def settings_customise_sources(
         cls: type[BaseSettings],
         settings_cls: type[BaseSettings],
         init_settings: PydanticBaseSettingsSource,
@@ -158,6 +158,20 @@ class Settings(BaseSettings):
         dotenv_settings: PydanticBaseSettingsSource,
         file_secret_settings: PydanticBaseSettingsSource,
     ) -> tuple[PydanticBaseSettingsSource, ...]:
+        """
+        Customizes the order of settings sources for the given `settings_cls`.
+
+        Args:
+            cls (type[BaseSettings]): The class of the settings.
+            settings_cls (type[BaseSettings]): The class of the settings.
+            init_settings (PydanticBaseSettingsSource): The initial settings source.
+            env_settings (PydanticBaseSettingsSource): The environment settings source.
+            dotenv_settings (PydanticBaseSettingsSource): The dotenv settings source.
+            file_secret_settings (PydanticBaseSettingsSource): The file secret settings source.
+
+        Returns:
+            tuple[PydanticBaseSettingsSource, ...]: The customized order of settings sources.
+        """
         # Here we choose the order for settings
         return (
             init_settings,

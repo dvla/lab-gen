@@ -5,10 +5,10 @@ import boto3
 from google.oauth2 import service_account
 from langchain_aws.chat_models.bedrock import ChatBedrock
 from langchain_community.chat_models.azureml_endpoint import AzureMLChatOnlineEndpoint, CustomOpenAIChatContentFormatter
-from langchain_community.llms import HuggingFaceEndpoint
 from langchain_community.llms.azureml_endpoint import AzureMLEndpointApiType
 from langchain_core.language_models import BaseChatModel, BaseLanguageModel
 from langchain_google_vertexai import ChatVertexAI, HarmBlockThreshold, HarmCategory
+from langchain_huggingface import ChatHuggingFace, HuggingFaceEndpoint
 from langchain_mistralai.chat_models import ChatMistralAI
 from langchain_openai import AzureChatOpenAI
 from loguru import logger
@@ -181,6 +181,31 @@ def init_vertex_llm(model: Model) -> ChatVertexAI:
     return ChatVertexAI(**vertex_setup)
 
 
+def init_huggingface_llm(model: Model) -> ChatHuggingFace:
+    """
+    Initialize the Hugging Face LLM client with the given model configuration.
+
+    Args:
+        model (Model): The model configuration.
+
+    Returns:
+        ChatHuggingFace: The initialized ChatHuggingFace instance.
+    """
+    config = HuggingfaceModelConfig(**model.config)
+
+    endpoint = HuggingFaceEndpoint(
+        repo_id=config.repo_id,
+        huggingfacehub_api_token=config.access_token,
+    )
+
+    hf_kwargs = {
+        "llm": endpoint,
+        "max_tokens": MAX_TOKENS,
+    }
+
+    return ChatHuggingFace(**hf_kwargs)
+
+
 def init_models() -> None:
     """
     Loops through the model settings, for each model configures an LLM client.
@@ -200,10 +225,7 @@ def init_models() -> None:
                 case ModelProvider.VERTEX:
                     llm = init_vertex_llm(model)
                 case ModelProvider.HUGGINGFACE:
-                    config = HuggingfaceModelConfig(**model.config)
-                    llm = HuggingFaceEndpoint(
-                        streaming=True,
-                        repo_id=config.repo_id, huggingfacehub_api_token=config.access_token)
+                    llm = init_huggingface_llm(model)
             if llm is not None:
                 logger.debug(f"Configuring LLM for {key} {model.identifier}")
                 model_providers[key] = llm
