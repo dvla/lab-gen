@@ -1,0 +1,143 @@
+[tool.poetry]
+name = "lab_gen"
+version = "0.1.0"
+description = "DVLA Emerging Tech Lab Generative AI project"
+authors = []
+license = "MIT"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+pydantic = "^2.4.2"
+pydantic-settings = "^2.0.3"
+fastapi = "^0.100.0"
+uvicorn = { version = "^0.22.0", extras = ["standard"] }
+opentelemetry-api = "^1.22.0"
+opentelemetry-sdk = "^1.22.0"
+opentelemetry-exporter-otlp = "^1.22.0"
+opentelemetry-instrumentation = "^0.43b0"
+opentelemetry-instrumentation-fastapi = "^0.43b0"
+opentelemetry-instrumentation-logging = "^0.43b0"
+ujson = "^5.8.0"
+openai = "^1.3.8"
+python-multipart = "^0.0.6"
+python-jose = {version = "^3.3.0", extras = ["cryptography"]}
+azure-appconfiguration = "^1.5.0"
+slowapi = "^0.1.8"
+azure-monitor-opentelemetry = "^1.3.0"
+tiktoken = "^0.5.2"
+langchain = "^0.1.14"
+boto3 = "^1.34.21"
+langchain-openai = "^0.0.3"
+anthropic = "^0.12.0"
+loguru = "^0.7.2"
+azure-cosmos = "^4.5.1"
+langchain-google-vertexai = "^0.0.3"
+huggingface-hub = "^0.20.3"
+langchain-community = "^0.0.31"
+transformers = "^4.37.2"
+langsmith = "^0.1.49"
+
+[tool.poetry.group.dev]
+optional = true
+
+[tool.poetry.group.test]
+optional = true
+
+[tool.poetry.group.dev.dependencies]
+black = "^23.9.1"
+ruff = "0.4.2"
+mypy = "^1.1.1"
+isort = "^5.11.4"
+pre-commit = "^3.0.1"
+autoflake = "^2.2.1"
+devtools = "^0.12.2"
+mysql-connector-python = "8.3.0"
+
+[tool.poetry.group.test.dependencies]
+pytest = "^7.4.2"
+pytest-env = "^0.8.1"
+pytest-cov = "^4.1.0"
+pytest-azurepipelines = "^1.0.5"
+anyio = "^4.0.0"
+httpx = "^0.23.3"
+
+[tool.isort]
+line_length=120
+profile = "black"
+multi_line_output = 3
+src_paths = ["lab_gen",]
+
+[tool.mypy]
+strict = true
+ignore_missing_imports = true
+allow_subclassing_any = true
+allow_untyped_calls = true
+pretty = true
+show_error_codes = true
+implicit_reexport = true
+allow_untyped_decorators = true
+warn_unused_ignores = false
+warn_return_any = false
+namespace_packages = true
+
+[tool.black]
+line-length = 120
+target-version = ["py310", "py311"]
+preview = true
+color = true
+
+[tool.ruff]
+lint.select = ["ALL"]
+lint.ignore = [
+    "ANN101", # pydocstyle - Missing type annotation for `self` in method
+    "D100",  # pydocstyle - missing docstring in public module
+    "D104",  # pydocstyle - missing docstring in public package
+    "D107",  # pydocstyle - missing docstring in `__init__`
+    "D203",  # one-blank-line-before-class conflicts with D211
+    "D212",  # multi-line-summary-first-line conflicts with D213
+]
+line-length = 120
+target-version = "py311"
+
+[tool.ruff.lint.per-file-ignores]
+"lab_gen/tests/*/*.py" = ["S101"]
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+
+[tool.ruff.lint.isort]
+case-sensitive = true
+lines-between-types = 1
+lines-after-imports = 2
+
+[tool.pytest.ini_options]
+testpaths = ["lab_gen/tests/unit"]
+addopts = "-ra --cov --cov-report=xml"
+filterwarnings = [
+    "error",
+    "ignore::DeprecationWarning",
+    "ignore:.*unclosed.*:ResourceWarning",
+]
+env = [
+    "LAB_GEN_ENVIRONMENT=pytest",
+    "AZURE_APP_API_KEY=pytest_key",
+    "R:AZURE_MODELS=[{\"provider\": \"AZURE\",\"variant\": \"GENERAL\",\"identifier\": \"gpt-35-1106\",\"description\": \"OpenAI GPT-3.5 Turbo powered\", \"location\":\"UK\",\"config\": {\"AZURE_OPENAI_API_KEY\": \"ef1\", \"AZURE_OPENAI_ENDPOINT\": \"test-openai-service.openai.azure.com\",\"AZURE_OPENAI_API_VERSION\": \"2023-07-01-preview\"}}]"
+]
+
+[tool.coverage.report]
+show_missing = true
+skip_covered = true
+omit = ["**/__init__.py", "**/tests/*", "*/conftest.py"]
+exclude_lines = [
+    'raise',
+]
+
+[tool.bandit]
+exclude_dirs = ["tests", "dist"]
+#tests = ["B201", "B301"]
+#skips = ["B101", "B601"]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"

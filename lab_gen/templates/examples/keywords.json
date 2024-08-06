@@ -1,0 +1,7 @@
+{
+    "_type": "prompt",
+    "input_variables": [
+        "input"
+    ],
+    "template": "I have a body of text: \n{input}. \nBased on the information provided by the body of text, extract the keywords that best describe the topic of the text. Provide a comma-seperated list of the chosen keywords."
+}

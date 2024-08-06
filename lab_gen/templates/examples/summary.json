@@ -1,0 +1,5 @@
+{
+    "_type": "prompt",
+    "input_variables": ["input"],
+    "template": "Summarise the following text. It is imperative you stick only to the information that is provided. Try to include as many key details as possible that draw directly from the source text. Your response should be in the form of a bulleted list with the key details mentioned above, also ensure that the response ONLY consists of the bulleted list and no preceding introduction text. Ensure that each of the bullet points are clear and concise. Basically, I need you to TL;DR the given text. \nText: {input}"
+}

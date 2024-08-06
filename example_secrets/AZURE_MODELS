@@ -1,0 +1,92 @@
+[
+  {
+    "provider": "AZURE",
+    "variant": "GENERAL",
+    "identifier": "gpt-35-1106",
+    "description": "OpenAI GPT-3.5 Turbo powered",
+    "location": "UK",
+    "config": {
+      "AZURE_OPENAI_API_KEY": "222264a05a111111",
+      "AZURE_OPENAI_ENDPOINT": "https://my-app-south.openai.azure.com/",
+      "AZURE_OPENAI_API_VERSION": "2023-07-01-preview"
+    }
+  },
+  {
+    "provider": "AZURE",
+    "variant": "ADVANCED",
+    "identifier": "gpt-4-1106",
+    "description": "OpenAI GPT-4",
+    "location": "UK",
+    "config": {
+      "AZURE_OPENAI_API_KEY": "222264a05a111111",
+      "AZURE_OPENAI_ENDPOINT": "https://my-app-south.openai.azure.com/",
+      "AZURE_OPENAI_API_VERSION": "2023-07-01-preview"
+    }
+  },
+  {
+    "provider": "AZURE",
+    "variant": "MULTIMODAL",
+    "identifier": "gpt-4-vision",
+    "description": "OpenAI GPT-4",
+    "location": "Sweden",
+    "config": {
+      "AZURE_OPENAI_API_KEY": "222264a05a111111",
+      "AZURE_OPENAI_ENDPOINT": "https://my-app-sweden.openai.azure.com/",
+      "AZURE_OPENAI_API_VERSION": "2023-07-01-preview"
+    }
+  },
+  {
+    "provider": "BEDROCK",
+    "variant": "GENERAL",
+    "identifier": "anthropic.claude-instant-v1",
+    "description": "anthropic.claude-instant",
+    "location": "Frankfurt",
+    "config": {
+      "AWS_REGION": "eu-central-1",
+      "AWS_ACCESS_KEY_ID": "IMVZ111111",
+      "AWS_SECRET_ACCESS_KEY": "3cSofg111111"
+    }
+  },
+  {
+    "provider": "HUGGINGFACE",
+    "variant": "GENERAL",
+    "identifier": "Mixtral-8x7b-Instruct-v0.1",
+    "description": "Mixtral 8x7b Instruct-v0.1",
+    "location": "Unknown",
+    "config": {
+      "HF_TOKEN": "klGYov",
+      "HF_REPO_ID": "mistralai/Mixtral-8x7B-Instruct-v0.1"
+    }
+  },
+  {
+    "provider": "HUGGINGFACE",
+    "variant": "ADVANCED",
+    "identifier": "Llama-2-70b",
+    "description": "Llama 2 70 billion parameters",
+    "location": "Unknown",
+    "config": {
+      "HF_TOKEN": "klGYov",
+      "HF_REPO_ID": "meta-llama/Llama-2-70b-chat-hf"
+    }
+  },
+  {
+    "provider": "VERTEX",
+    "variant": "GENERAL",
+    "identifier": "gemini-pro",
+    "description": "Google's Gemini Pro, designed to handle natural language tasks, multi-turn text and chat.",
+    "location": "USA",
+    "config": {
+      "type": "service_account",
+      "project_id": "my-app",
+      "private_key_id": "3cSofg111111",
+      "private_key": "-----BEGIN PRIVATE KEY-----\nIEvQIBADAMJWeQUXGn=\n-----END PRIVATE KEY-----\n",
+      "client_email": "gen-ai-vertex@my-app.iam.gserviceaccount.com",
+      "client_id": "222207",
+      "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+      "token_uri": "https://oauth2.googleapis.com/token",
+      "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+      "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/gen-ai-vertex%40my-app.iam.gserviceaccount.com",
+      "universe_domain": "googleapis.com"
+    }
+  }
+]

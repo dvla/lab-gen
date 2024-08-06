@@ -1,0 +1,5 @@
+{
+    "_type": "prompt",
+    "input_variables": ["user_id"],
+    "template": "You are chatting with {user_id}. Say Hi"
+}

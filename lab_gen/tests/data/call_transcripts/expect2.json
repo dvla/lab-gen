@@ -1,0 +1,21 @@
+{
+  "startTime": "2024-06-10T09:30:00Z",
+  "endTime": "2024-06-10T09:34:56Z",
+  "participants": "Agent, James Smith",
+  "customerSituation": "James Smith had to surrender his driving license about 6 months ago due to medical reasons related to his eyesight, likely cataracts. However, he has since had surgery to resolve the issue and wants to reapply for his license.",
+  "desiredOutcome": "James Smith wants to reapply for and obtain his driving license.",
+  "topics": "Reapplying for driving license after medical revocation",
+  "steps": [
+      "Agent ordered a D1 application pack to be sent to James Smith's address",
+      "James Smith needs to complete the D1 application form and any relevant medical forms",
+      "Get his doctor to complete the medical section confirming he meets vision standards",
+      "Send completed forms and medical evidence to DVLA's Drivers Medical Group",
+      "DVLA will process application, possibly involving medical advisor review"
+  ],
+  "resolution": "The agent provided clear instructions on the steps James Smith needs to take to reapply for his driving license after having it revoked due to a medical condition. However, James was unhappy with the potential 4 week processing time.",
+  "category": [
+      "Driver"
+  ],
+  "sentiment": "negative",
+  "fcr": false
+}

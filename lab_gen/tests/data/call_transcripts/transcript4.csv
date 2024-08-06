@@ -1,0 +1,47 @@
+﻿startTime,from,to,message
+2024-01-02T10:15:00.0000000Z,james jones,,Hello?
+2024-01-02T10:15:01.5000000Z,DVLA Agent,,"Hello, how can I help you today?"
+2024-01-02T10:15:04.2000000Z,james jones,,"Yes, I need to sort out the vehicle tax for my car."
+2024-01-02T10:15:07.8000000Z,DVLA Agent,,"Okay, no problem. What seems to be the issue with the vehicle tax?"
+2024-01-02T10:15:12.5000000Z,james jones,,"Well, I received a letter saying my tax was due for renewal, but the car hasn't been on the road for over a year now."
+2024-01-02T10:15:17.3000000Z,DVLA Agent,,I see. So you'll need to declare a Statutory Off Road Notification then.
+2024-01-02T10:15:19.9000000Z,james jones,,A what? Sorn?
+2024-01-02T10:15:22.1000000Z,DVLA Agent,,"Yes, that's right - a SORN, which stands for Statutory Off Road Notification."
+2024-01-02T10:15:26.7000000Z,james jones,,Oh right. And how do I go about doing that?
+2024-01-02T10:15:29.5000000Z,DVLA Agent,,"To declare a SORN, you'll need to go on the gov.uk website or give us a call."
+2024-01-02T10:15:33.2000000Z,james jones,,"Alright, well I've called you now, so can we just do it over the phone?"
+2024-01-02T10:15:37.0000000Z,DVLA Agent,,"Yes, of course. I'll need to take some details from you first. Do you have the vehicle registration document, or log book, to hand?"
+2024-01-02T10:15:41.3000000Z,james jones,,Yeah I've got it here.
+2024-01-02T10:15:43.8000000Z,DVLA Agent,,Great. Can you confirm the registration number on the document for me please?
+2024-01-02T10:15:48.2000000Z,james jones,,PN57 ABC
+2024-01-02T10:15:50.6000000Z,DVLA Agent,,"Sorry, could you repeat that? I didn't quite catch the full registration."
+2024-01-02T10:15:54.1000000Z,james jones,,"It's, uh, PN57 ABX"
+2024-01-02T10:15:56.9000000Z,DVLA Agent,,"PN57 ABX. Got it, thank you."
+2024-01-02T10:16:00.4000000Z,DVLA Agent,,And what is the make and model of the vehicle?
+2024-01-02T10:16:03.7000000Z,james jones,,It's a Ford Fiesta.
+2024-01-02T10:16:06.2000000Z,DVLA Agent,,"Okay, and the color?"
+2024-01-02T10:16:08.9000000Z,james jones,,Red.
+2024-01-02T10:16:10.6000000Z,DVLA Agent,,Got it. One moment while I pull up the details.
+2024-01-02T10:16:19.8000000Z,DVLA Agent,,"Alright, I have the Ford Fiesta registered PN57 ABX coming up."
+2024-01-02T10:16:23.5000000Z,james jones,,That's the one.
+2024-01-02T10:16:26.3000000Z,DVLA Agent,,"Okay, to confirm, you are looking to declare a Statutory Off Road Notification, or SORN, for this vehicle?"
+2024-01-02T10:16:31.0000000Z,james jones,,Yes that's right. It's been sat idle in my garage for well over a year now.
+2024-01-02T10:16:35.8000000Z,DVLA Agent,,"No problem at all. Just to make you aware, when you declare SORN it means the vehicle cannot be used or kept on public roads until you tax it again."
+2024-01-02T10:16:40.5000000Z,james jones,,"Yeah yeah, I understand."
+2024-01-02T10:16:43.2000000Z,DVLA Agent,,"Okay great. I'll go ahead and process the SORN declaration for you now. Can I take your full name and current address please, to tie to the vehicle record?"
+2024-01-02T10:16:50.1000000Z,james jones,,It's james jones. 24 Acacia Avenue...Newtown...AB12 3CD.
+2024-01-02T10:16:57.0000000Z,DVLA Agent,,Thanks James. And can you confirm the reference number printed at the top of the log book please?
+2024-01-02T10:17:02.3000000Z,james jones,,Erm...it's 1234567.
+2024-01-02T10:17:05.7000000Z,DVLA Agent,,Got it. I'll make a note that you read that out to me.
+2024-01-02T10:17:12.6000000Z,DVLA Agent,,"Okay, I've processed the SORN declaration now. You'll receive confirmation through the post within the next week."
+2024-01-02T10:17:17.9000000Z,james jones,,A whole week?? That's a long time.
+2024-01-02T10:17:20.8000000Z,DVLA Agent,,"Yes, I'm afraid that's the standard timescale for the SORN paperwork to arrive by mail."
+2024-01-02T10:17:25.1000000Z,james jones,,"Oh for...this is ridiculous. Why can't you just email me or something? It's 2024!"
+2024-01-02T10:17:30.4000000Z,DVLA Agent,,"I understand your frustration sir, but those are the procedures we have to follow. I don't have any way to send digital confirmations."
+2024-01-02T10:17:35.7000000Z,james jones,,This is absolutely absurd! How outdated can you get?
+2024-01-02T10:17:40.1000000Z,DVLA Agent,,"Sir, I'm just following the DVLA's policies and processes here."
+2024-01-02T10:17:44.5000000Z,james jones,,"Yeah well your policies stink! You idiots are stuck in the 1900s!"
+2024-01-02T10:17:49.9000000Z,DVLA Agent,,I apologize for the inconvenience but there's no need for insults. I've made the SORN declaration for you as required.
+2024-01-02T10:17:55.3000000Z,james jones,,Whatever. What a total waste of my time. Useless!
+2024-01-02T10:17:59.7000000Z,DVLA Agent,,I'm sorry you feel that way sir. Is there anything else I can assist with today?
+2024-01-02T10:18:04.1000000Z,james jones,,No! You've done enough damage already.

@@ -1,0 +1,11 @@
+TEXT_MEDIA_TYPE = "text/plain; charset=utf-8"
+
+success200 = "Successful Response"
+error429 = "The user has sent too many requests in a given amount of time"
+error422 = "Unprocessable Input"
+error400 = "Invalid User Input"
+error404 = "Conversation not found"
+error501 = "Server error"
+error503 = "OpenAI server is busy"
+error500 = "OpenAI Response (Streaming) Error"
+error_invalid_json_output = "Invalid JSON output"

@@ -1,0 +1,9 @@
+{
+  "recommendations": [
+    "dangmai.workspace-default-settings",
+    "ms-python.python",
+    "ms-python.black-formatter",
+    "ms-azuretools.vscode-azurefunctions",
+    "charliermarsh.ruff"
+  ]
+}

@@ -1,0 +1,138 @@
+trigger:
+  batch: true
+  branches:
+    include:
+    - main
+    - feature/*
+    - fix/*
+    exclude:
+    - releases/*
+
+variables:
+- name: dockerRegistryServiceConnection
+  value: '$(registryConnection)'
+- name: dockerfilePath
+  value: '$(Build.SourcesDirectory)/Dockerfile'
+- name: tag
+  value: '$(Build.BuildId)'
+- name: buildNumber
+  value: '$(Build.BuildNumber)'
+- name: isMain
+  value: $[eq(variables['Build.SourceBranch'], 'refs/heads/main')]
+- name: 'System.Debug'
+  value: true
+- name: slot
+  ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/main') }}:
+    value: 'dev'
+  ${{ if ne(variables['Build.SourceBranch'], 'refs/heads/main') }}:
+    value: 'build'
+- name: vmImageName
+  value: 'ubuntu-latest'
+
+pool:
+  vmImage: $(vmImageName)
+
+stages:
+- stage: BuildTest
+  displayName: Build and test project
+  jobs:
+  - job: "LabGenerative"
+    displayName: "Build Tech Lab Generative"
+    strategy:
+      matrix:
+            # Python310:
+            #   python.version: '3.10'
+        Python311:
+          python.version: "3.11"
+
+    steps:
+    - task: UsePythonVersion@0
+      inputs:
+        versionSpec: "$(python.version)"
+      displayName: "Use Python $(python.version)"
+
+    - script: |
+        pipx install poetry
+        poetry install --with=dev,test
+      displayName: "Install dependencies"
+
+    - script: |
+        poetry run ruff check lab_gen
+      displayName: "pylint"
+
+    - script: |
+        cp example.env .env
+        mkdir secrets
+        poetry run pytest -vv
+      displayName: "pytest"
+    - task: PublishCodeCoverageResults@2
+      inputs:
+        summaryFileLocation: '$(System.DefaultWorkingDirectory)/**/*coverage.xml'
+
+- stage: Package
+  displayName: Build and package docker image
+  dependsOn: BuildTest
+  jobs:
+  - job: Build
+    displayName: Build
+    steps:
+    - task: Docker@2
+      displayName: Build and push an image to Azure container registry
+      inputs:
+        command: buildAndPush
+        repository: $(imageRepository)
+        dockerfile: $(dockerfilePath)
+        containerRegistry: $(dockerRegistryServiceConnection)
+        tags: |
+          $(tag)
+  - deployment: DeployToStagingEnvironment
+    displayName: Publish
+    dependsOn: Build
+    environment: '$(slot)'
+    pool:
+      vmImage: $(vmImageName)
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - task: AzureRmWebAppDeployment@4
+            displayName: Deploy the docker image to the Web App
+            inputs:
+              ConnectionType: "AzureRM"
+              appType: "webAppContainer"
+              deployToSlotOrASE: true
+              azureSubscription: $(azureSubscription)
+              WebAppName: $(webAppName)
+              ResourceGroupName: $(resourceGroupName)
+              SlotName: '$(slot)'
+              DockerNamespace: $(containerNamespace)
+              DockerRepository: $(imageRepository)
+              DockerImageTag: $(tag)
+              AppSettings: '-LAB_GEN_VERSION "$(buildNumber) $(tag)"'
+
+- stage: ProdDeploy
+  displayName: Deploy docker image to production
+  dependsOn: Package
+  condition: and(succeeded(), eq(variables.isMain, true))
+  jobs:
+  - deployment: DeployToProduction
+    displayName: Production
+    environment: production
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - task: AzureRmWebAppDeployment@4
+            displayName: Deploy the docker image to the production Web App
+            inputs:
+              ConnectionType: "AzureRM"
+              appType: "webAppContainer"
+              deployToSlotOrASE: true
+              azureSubscription: $(azureSubscription)
+              WebAppName: $(webAppName)
+              ResourceGroupName: $(resourceGroupName)
+              SlotName: production
+              DockerNamespace: $(containerNamespace)
+              DockerRepository: $(imageRepository)
+              DockerImageTag: $(tag)
+              AppSettings: '-LAB_GEN_VERSION "$(buildNumber) $(tag)"'

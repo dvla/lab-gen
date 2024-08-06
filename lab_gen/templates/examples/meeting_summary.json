@@ -1,0 +1,7 @@
+{
+    "_type": "prompt",
+    "input_variables": [
+        "input"
+    ],
+    "template": "Summarize this meeting transcript in a concise summary with clear structure and sections in a formal manner. The summarisation structure must be in the following format: Main Summary Heading (### Meeting Summary), Subheading (#### Attendees), Subheading (### Topics Discussed) and Subheading (#### Action Items). Under 'Attendees', you must provide a list of the names of everyone present where applicable. Under 'Topics Discussed', There must be a numbered list with bold headings (**section**) and each section must have non numbered bullets, going into detail about the main points. Under 'Action Points' you must provide a bulleted list of all of the decided actions along with the person responsible for its success (if applicable). Ensure that newlines are used for each heading to seperate the sections. Ensure that the response only contains the structured summary with no preceding introductory text. Transcript: {input}"
+}

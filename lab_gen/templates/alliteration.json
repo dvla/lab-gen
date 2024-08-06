@@ -1,0 +1,5 @@
+{
+    "_type": "prompt",
+    "input_variables": ["input"],
+    "template": "Write a summary of the following statement, as a short alliteration of no more than 5 words. Statement: {input}"
+}

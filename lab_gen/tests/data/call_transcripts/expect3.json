@@ -1,0 +1,24 @@
+{
+  "startTime": "2024-05-12T09:00:00Z",
+  "endTime": "2024-05-12T09:03:36Z",
+  "participants": "Agent, David Smith",
+  "customerSituation": "David Smith needs to surrender his driving license for 6 months due to a medical condition related to his eyesight as advised by his GP.",
+  "desiredOutcome": "To complete the voluntary license surrender process with the DVLA as required.",
+  "topics": "Surrendering driving license due to medical condition",
+  "steps": [
+      "Agent explained the process to voluntarily surrender a driving license for a medical reason to the DVLA",
+      "Agent offered to send the 'Declaration of Voluntary Surrender' form to David Smith by mail",
+      "Agent provided address to send completed form and license to the DVLA",
+      "Agent explained DVLA will conduct medical assessments over 6 months and reinstate license if requirements met"
+  ],
+  "resolution": "The agent was able to provide detailed guidance to David Smith on the voluntary license surrender process and next steps through the DVLA for his medical condition. His key requirements were met.",
+  "category": [
+      "Driver"
+  ],
+  "sentiment": "Neutral",
+  "driver": {
+    "firstNames": "David",
+    "lastName": "Smith"
+  },
+  "fcr": true
+}

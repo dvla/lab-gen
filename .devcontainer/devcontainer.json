@@ -1,0 +1,63 @@
+{
+    "name": "Azure Developer Python",
+    "image": "mcr.microsoft.com/devcontainers/python:3.11",
+    "containerEnv": {
+        "LAB_GEN_RELOAD": "True",
+        "POETRY_VIRTUALENVS_IN_PROJECT": "true"
+    },
+    "secrets": {
+        "LAB_GEN_SESSION_STORE_URI": {
+            "description": "The URI to the cosmosdb session store. e.g. https://mycosmosdb.documents.azure.com:443/"
+        },
+        "LAB_GEN_SESSION_STORE_KEY": {
+            "description": "The key to the cosmosdb session store., e.g. 0177EK4Q=="
+        },
+        "AZURE_MODELS": {
+            "description": "The configuration of the LLM models. A list of models, but doesn't have to be azure."
+        }
+    },
+    "features": {
+        "ghcr.io/azure/azure-dev/azd:latest": {}
+    },
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "ms-python.python",
+                "ms-python.black-formatter",
+                "ms-azuretools.azure-dev",
+                "dangmai.workspace-default-settings",
+                "charliermarsh.ruff"
+            ],
+            "settings": {
+                "python.defaultInterpreterPath": "${workspaceFolder}/.venv/bin/python",
+                "python.testing.pytestEnabled": true,
+                "python.testing.unittestEnabled": false,
+                "files.exclude": {
+                    "**/__pycache__": true,
+                    "**/.ai": true,
+                    "**/.pytest_cache": true,
+                    ".ruff_cache": true,
+                    ".coverage": true
+                },
+                "[python]": {
+                    "editor.defaultFormatter": "charliermarsh.ruff"
+                }
+            }
+        }
+    },
+    "forwardPorts": [
+        8081
+    ],
+    "portsAttributes": {
+        "8081": {
+            "label": "Local Dev Server"
+        }
+    },
+    "onCreateCommand": "cp -n example.env .env && pip install poetry",
+    "updateContentCommand": "poetry install --with=dev,test",
+    "remoteUser": "vscode",
+    "hostRequirements": {
+        "memory": "8gb",
+        "cpus": 4
+    }
+}

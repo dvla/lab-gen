@@ -1,0 +1,8 @@
+{
+    "_type": "prompt",
+    "input_variables": [
+        "language",
+        "input"
+    ],
+    "template": "Take the following extract, your job is to take it and clearly and concisely translate the given extract into {language}. \nExtract: {input}"
+}

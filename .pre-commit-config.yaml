@@ -1,0 +1,60 @@
+# See https://pre-commit.com for more information
+# See https://pre-commit.com/hooks.html for more hooks
+repos:
+- repo: https://github.com/pre-commit/pre-commit-hooks
+  rev: v2.4.0
+  hooks:
+  - id: check-ast
+  - id: trailing-whitespace
+  - id: end-of-file-fixer
+  - id: check-toml
+  - id: detect-aws-credentials
+    args:
+    - --allow-missing-credentials
+
+- repo: https://github.com/macisamuele/language-formatters-pre-commit-hooks
+  rev: v2.1.0
+  hooks:
+  - id: pretty-format-yaml
+    args:
+    - --autofix
+    - --preserve-quotes
+    - --indent=2
+
+- repo: local
+  hooks:
+  - id: autoflake
+    name: autoflake
+    entry: poetry run autoflake
+    language: system
+    types: [python]
+    args: [--in-place, --remove-all-unused-imports, --remove-duplicate-keys]
+    exclude: '__init__.py'
+
+  # - id: black
+  #   name: Format with Black
+  #   entry: poetry run black
+  #   language: system
+  #   types: [python]
+
+  # - id: mypy
+  #   name: Validate types with MyPy
+  #   entry: poetry run mypy
+  #   language: system
+  #   types: [python]
+  #   pass_filenames: false
+  #   args:
+  #   - "lab_gen"
+
+  - id: ruff
+    name: ruff
+    entry: poetry run ruff
+    language: system
+    types: [python]
+    args: [check, lab_gen]
+
+- repo: https://github.com/PyCQA/bandit
+  rev: 1.7.7
+  hooks:
+  - id: bandit
+    args: ["-c", "pyproject.toml"]
