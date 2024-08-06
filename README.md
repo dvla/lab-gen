@@ -23,7 +23,9 @@ echo 'LAB_GEN_SESSION_STORE_KEY=0177PWaDjWhceFttEK4Q=='  >> .env
 ```
 
 Setup your models config:
+
  `cp -r example_secrets secrets`.
+
  Edit the `AZURE_MODELS` file in `./secrets`.
 
 Run the application:
