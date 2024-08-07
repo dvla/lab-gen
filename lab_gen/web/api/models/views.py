@@ -124,18 +124,18 @@ async def chat_handler(
             model = get_model(chat.modelKey)
             logger.debug(f"User is {x_business_user} and Chat Model name is : {model.identifier}")
 
-            # Record the chat request metric with dimensions for business user, environment and model
-            chat_requests_counter.add(1, {
+            meta = {
                 "business_user": x_business_user,
                 "environment": settings.environment,
-                "model_name": model.identifier,
-            })
+                "family": model.family.value,
+                "provider": model.provider.value,
+                "variant": model.variant.value,
+            }
+
+            # Record the chat request metric
+            chat_requests_counter.add(1, meta)
             # Record the prompt tokens metric
-            prompt_tokens_counter.record(prompt_tokens, {
-                "business_user": x_business_user,
-                "environment": settings.environment,
-                "model_name": model.identifier,
-            })
+            prompt_tokens_counter.record(prompt_tokens, meta)
 
         except ModelKeyError as ke:
             raise HTTPException(HTTP_400_BAD_REQUEST, str(ke)) from ke
@@ -155,10 +155,6 @@ async def chat_handler(
             raise HTTPException(HTTP_500_INTERNAL_SERVER_ERROR, error500) from e
 
         # Record the completion tokens metric
-        completion_tokens_counter.record(completion_tokens, {
-            "business_user": x_business_user,
-            "environment": settings.environment,
-            "model_name": model.identifier,
-        })
+        completion_tokens_counter.record(completion_tokens, meta)
 
     return StreamingResponse(response_stream(), media_type="text/plain; charset=utf-8")
