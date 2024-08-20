@@ -22,7 +22,7 @@ def get_evaluator_for_key(key: str, prompt: str) -> Any: # noqa: ANN401
     return load_evaluator(EvaluatorType.LABELED_SCORE_STRING, criteria=key, llm=eval_client, prompt=prompt)
 
 def execute_eval_and_score(dataset_input: str, dataset_output: str, completion: str, # noqa: PLR0913
-                           handler: Any, eval_types: dict, prompt: str) -> None: # noqa: ANN401
+                           handler: Any, eval_types: dict, prompt: str, scoring_functions: dict) -> None: # noqa: ANN401
     """
     Executes the evaluation and scoring of a completion against a dataset.
 
@@ -33,6 +33,7 @@ def execute_eval_and_score(dataset_input: str, dataset_output: str, completion: 
         handler (Any): The handler object to track the trace for the evaluation results.
         eval_types (dict): A dictionary of evaluation types and their corresponding values.
         prompt (str): The prompt to be used for the evaluation.
+        scoring_functions (dict): A dictionary of scoring functions and their corresponding names.
 
     Returns:
         None
@@ -49,3 +50,7 @@ def execute_eval_and_score(dataset_input: str, dataset_output: str, completion: 
         )
 
         handler.trace.score(name=criterion[0], value=eval_result["score"], comment=eval_result["reasoning"])
+
+    # Heuristic custom scoring
+    for criterion_name, scoring_function in scoring_functions.items():
+        handler.trace.score(name=criterion_name, value=scoring_function(str(dataset_output), completion.content))

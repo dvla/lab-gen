@@ -1,13 +1,14 @@
 from typing import Any
 
 from evaluator import execute_eval_and_score
+from heuristics import character_count_percentage, grade_level, json_validator, reading_ease
 from langchain.evaluation.criteria.eval_chain import Criteria
 from langfuse import Langfuse
 from models import get_llm_client
 from prompts import criteria_prompt_template
 
 
-# List of supported criteria to be used in EVAL_TYPES dictionary
+# List of supported LLM criteria to be used in EVAL_TYPES dictionary
 SUPPORTED_CRITERIA ={
     Criteria.CONCISENESS,
     Criteria.RELEVANCE,
@@ -24,7 +25,15 @@ SUPPORTED_CRITERIA ={
     Criteria.DEPTH,
 }
 
-# Select the criteria you want to evaluate - custom criteria can be added here too
+# Dictionary of custom heuristic scoring functions to be used in the evaluation
+CUSTOM_SCORING_FUNCTIONS = {
+    "Reading Ease": reading_ease,
+    "Grade Level": grade_level,
+    "Character Count Percentage": character_count_percentage,
+    "JSON Validator": json_validator,
+}
+
+# Select the LLM criteria you want to evaluate - custom LLM criteria can be added here too
 EVAL_TYPES={
     Criteria.CORRECTNESS: True,
     "JSON Correctness": """Does the response follow all instructions to heal the incorrect JSON and match the schema
@@ -38,7 +47,7 @@ DATASET_NAME = "DATASET-NAME"
 # Name of the evaluation run
 EVAL_RUN_NAME = "LLMMODEL-EVALMODELEvaluator"
 
-# Prompt to be used for evaluation
+# Prompt to be used for LLM evaluation
 EVAL_PROMPT = criteria_prompt_template
 
 langfuse = Langfuse()
@@ -86,7 +95,8 @@ def main() -> None:
         dataset_output = item.expected_output["content"]
         completion = run_my_langchain_llm_app(dataset_input, handler)
 
-        execute_eval_and_score(dataset_input, dataset_output, completion, handler, EVAL_TYPES, EVAL_PROMPT)
+        execute_eval_and_score(dataset_input, dataset_output, completion,
+                               handler, EVAL_TYPES, EVAL_PROMPT, CUSTOM_SCORING_FUNCTIONS)
 
 if __name__ == "__main__":
     main()
