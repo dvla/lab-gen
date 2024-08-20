@@ -46,7 +46,7 @@ async def client(
 
 
 @pytest.fixture()
-def mock_openai_chatcompletion(monkeypatch) -> None:  # noqa: PT004, ANN001, C901
+def mock_openai_chatcompletion(monkeypatch) -> None:  # noqa: ANN001, C901
     """
     A pytest fixture that mocks the openai chat completion for testing purposes.
 
@@ -191,7 +191,7 @@ def mock_openai_chatcompletion(monkeypatch) -> None:  # noqa: PT004, ANN001, C90
 
 
 @pytest.fixture()
-def mock_azure_credentials(monkeypatch) -> None :  # noqa: PT004, ANN001
+def mock_azure_credentials(monkeypatch) -> None :  # noqa: ANN001
     """Fixture for mocking Azure credentials using monkeypatch."""
     class MockAzureCredential(azure.core.credentials_async.AsyncTokenCredential):
         """Fixture for mocking Azure credentials using monkeypatch."""
