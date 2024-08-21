@@ -5,7 +5,7 @@ from heuristics import character_count_percentage, grade_level, json_validator, 
 from langchain.evaluation.criteria.eval_chain import Criteria
 from langfuse import Langfuse
 from models import get_llm_client
-from prompts import criteria_prompt_template
+from prompts import trulens_comprehensiveness_template
 
 
 # List of supported LLM criteria to be used in EVAL_TYPES dictionary
@@ -25,6 +25,15 @@ SUPPORTED_CRITERIA ={
     Criteria.DEPTH,
 }
 
+# Select the criteria you want to evaluate - custom criteria can be added here too
+EVAL_TYPES = [
+    {"name": "Comprehensiveness",
+     "description": "Modified comprehensiveness prompt from TruLens",
+     "prompt": trulens_comprehensiveness_template},
+    {"name": Criteria.CORRECTNESS},
+    {"name": Criteria.CONCISENESS},
+    {"name": Criteria.COHERENCE},
+]
 # Dictionary of custom heuristic scoring functions to be used in the evaluation
 CUSTOM_SCORING_FUNCTIONS = {
     "Reading Ease": reading_ease,
@@ -33,22 +42,11 @@ CUSTOM_SCORING_FUNCTIONS = {
     "JSON Validator": json_validator,
 }
 
-# Select the LLM criteria you want to evaluate - custom LLM criteria can be added here too
-EVAL_TYPES={
-    Criteria.CORRECTNESS: True,
-    "JSON Correctness": """Does the response follow all instructions to heal the incorrect JSON and match the schema
-     of the expected response? Ensure the response also fixes errors such as valid registration numbers, etc
-    as detailed in the schema instructions.""",
-}
-
 # Name of the dataset in Langfuse
-DATASET_NAME = "DATASET-NAME"
+DATASET_NAME = "DATASET_NAME"
 
 # Name of the evaluation run
 EVAL_RUN_NAME = "LLMMODEL-EVALMODELEvaluator"
-
-# Prompt to be used for LLM evaluation
-EVAL_PROMPT = criteria_prompt_template
 
 langfuse = Langfuse()
 langfuse.auth_check()
@@ -96,7 +94,7 @@ def main() -> None:
         completion = run_my_langchain_llm_app(dataset_input, handler)
 
         execute_eval_and_score(dataset_input, dataset_output, completion,
-                               handler, EVAL_TYPES, EVAL_PROMPT, CUSTOM_SCORING_FUNCTIONS)
+                               handler, EVAL_TYPES, CUSTOM_SCORING_FUNCTIONS)
 
 if __name__ == "__main__":
     main()

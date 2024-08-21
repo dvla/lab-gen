@@ -4,7 +4,10 @@ from langchain.evaluation import EvaluatorType, load_evaluator
 from langchain.evaluation.criteria.eval_chain import Criteria
 from langchain_core.prompts import PromptTemplate
 from models import get_eval_client
+from prompts import criteria_prompt_template
 
+
+DEFAULT_EVAL_PROMPT = criteria_prompt_template
 
 def get_evaluator_for_key(key: str, prompt: str) -> Any: # noqa: ANN401
     """
@@ -22,7 +25,7 @@ def get_evaluator_for_key(key: str, prompt: str) -> Any: # noqa: ANN401
     return load_evaluator(EvaluatorType.LABELED_SCORE_STRING, criteria=key, llm=eval_client, prompt=prompt)
 
 def execute_eval_and_score(dataset_input: str, dataset_output: str, completion: str, # noqa: PLR0913
-                           handler: Any, eval_types: dict, prompt: str, scoring_functions: dict) -> None: # noqa: ANN401
+                           handler: Any, eval_types: dict, scoring_functions: dict) -> None: # noqa: ANN401
     """
     Executes the evaluation and scoring of a completion against a dataset.
 
@@ -38,10 +41,15 @@ def execute_eval_and_score(dataset_input: str, dataset_output: str, completion: 
     Returns:
         None
     """
-    criteria = [[key, value] for key, value in eval_types.items()]
+    criteria = eval_types
 
     for criterion in criteria:
-        full_criterion = criterion[0] + ": " + criterion[1] if not isinstance(criterion[0], Criteria) else criterion[0]
+        full_criterion = (
+            criterion["name"] + ": " + criterion["description"]
+            if not isinstance(criterion["name"], Criteria)
+            else criterion["name"]
+        )
+        prompt = criterion["prompt"] if not isinstance(criterion["name"], Criteria) else DEFAULT_EVAL_PROMPT
         evaluator = get_evaluator_for_key(full_criterion, prompt)
         eval_result = evaluator.evaluate_strings(
             prediction=completion,
@@ -49,7 +57,7 @@ def execute_eval_and_score(dataset_input: str, dataset_output: str, completion: 
             reference=dataset_output,
         )
 
-        handler.trace.score(name=criterion[0], value=eval_result["score"], comment=eval_result["reasoning"])
+        handler.trace.score(name=criterion["name"], value=eval_result["score"], comment=eval_result["reasoning"])
 
     # Heuristic custom scoring
     for criterion_name, scoring_function in scoring_functions.items():
