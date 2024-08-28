@@ -9,7 +9,7 @@ from prompts import criteria_prompt_template
 
 DEFAULT_EVAL_PROMPT = criteria_prompt_template
 
-def get_evaluator_for_key(key: str, prompt: str, eval_client: BaseLanguageModel) -> Any: # noqa: ANN401
+def get_evaluator_for_key(key: str, prompt: str, eval_client: BaseLanguageModel) -> Any:  # noqa: ANN401
     """
     Returns an evaluator for a given key and prompt.
 
@@ -52,14 +52,16 @@ def execute_eval_and_score(dataset_input: str, dataset_output: str, completion: 
         )
         prompt = criterion["prompt"] if not isinstance(criterion["name"], Criteria) else DEFAULT_EVAL_PROMPT
         evaluator = get_evaluator_for_key(full_criterion, prompt, eval_client)
-        eval_result = evaluator.evaluate_strings(
-            prediction=completion,
-            input=dataset_input,
-            reference=dataset_output,
-        )
+        try:
+            eval_result = evaluator.evaluate_strings(
+                prediction=completion,
+                input=dataset_input,
+                reference=dataset_output,
+            )
 
-        handler.trace.score(name=criterion["name"], value=eval_result["score"], comment=eval_result["reasoning"])
-
+            handler.trace.score(name=criterion["name"], value=eval_result["score"], comment=eval_result["reasoning"])
+        except ValueError as e:
+            handler.trace.score(name=criterion["name"], value=-1, comment=str(e))
     # Heuristic custom scoring
     for criterion_name, scoring_function in scoring_functions.items():
         handler.trace.score(name=criterion_name, value=scoring_function(str(dataset_output), completion.content))
