@@ -16,6 +16,7 @@ class ModelProvider(Enum):
     """Represents different model providers."""
 
     AZURE = "AZURE"
+    ANTHROPIC = "ANTHROPIC"
     BEDROCK = "BEDROCK"
     VERTEX = "VERTEX"
     HUGGINGFACE = "HUGGINGFACE"

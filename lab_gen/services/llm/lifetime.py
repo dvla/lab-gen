@@ -3,6 +3,7 @@ from typing import Any
 import boto3
 
 from google.oauth2 import service_account
+from langchain_anthropic import ChatAnthropic
 from langchain_aws.chat_models.bedrock import ChatBedrock
 from langchain_community.chat_models.azureml_endpoint import AzureMLChatOnlineEndpoint, CustomOpenAIChatContentFormatter
 from langchain_community.llms import HuggingFaceEndpoint
@@ -199,6 +200,15 @@ def init_models() -> None:
                     llm = init_bedrock_llm(model)
                 case ModelProvider.VERTEX:
                     llm = init_vertex_llm(model)
+                case ModelProvider.ANTHROPIC:
+                    llm = ChatAnthropic(
+                        model=model.identifier,
+                        temperature=0,
+                        max_tokens=MAX_TOKENS,
+                        streaming=True,
+                        max_retries=2,
+                        api_key=model.config["ANTHROPIC_API_KEY"],
+                    )
                 case ModelProvider.HUGGINGFACE:
                     config = HuggingfaceModelConfig(**model.config)
                     llm = HuggingFaceEndpoint(

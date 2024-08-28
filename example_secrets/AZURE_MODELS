@@ -89,6 +89,17 @@
     }
   },
   {
+    "provider": "ANTHROPIC",
+    "variant": "GENERAL",
+    "family": "CLAUDE",
+    "identifier": "claude-3-5-sonnet-20240620",
+    "description": "Claude 3.5 Sonnet 20240620",
+    "location": "Unknown",
+    "config": {
+      "ANTHROPIC_API_KEY": "sk-ant-LzNjZS1hZG1pbg=="
+    }
+  },
+  {
     "provider": "HUGGINGFACE",
     "variant": "GENERAL",
     "family": "MISTRAL",
@@ -115,7 +126,7 @@
   {
     "provider": "VERTEX",
     "variant": "GENERAL",
-    "family":"GEMINI",
+    "family": "GEMINI",
     "identifier": "gemini-pro",
     "description": "Google's Gemini Pro, designed to handle natural language tasks, multi-turn text and chat.",
     "location": "USA",
