@@ -1,11 +1,13 @@
 from typing import Any
 
+from client import get_client
 from evaluator import execute_eval_and_score
 from heuristics import character_count_percentage, grade_level, json_validator, reading_ease
 from langchain.evaluation.criteria.eval_chain import Criteria
 from langfuse import Langfuse
-from models import get_llm_client
 from prompts import trulens_comprehensiveness_template
+
+from lab_gen.datatypes.models import ModelFamily, ModelProvider, ModelVariant
 
 
 # List of supported LLM criteria to be used in EVAL_TYPES dictionary
@@ -48,10 +50,19 @@ DATASET_NAME = "DATASET_NAME"
 # Name of the evaluation run
 EVAL_RUN_NAME = "LLMMODEL-EVALMODELEvaluator"
 
+# Set the single LLM you want to evaluate
+LLM_CLIENT = {"provider": ModelProvider.VERTEX, "variant": ModelVariant.GENERAL, "family": ModelFamily.GEMINI}
+
+# Set any number of evaluation llms
+EVAL_CLIENTS = [
+    {"provider": ModelProvider.VERTEX, "variant": ModelVariant.ADVANCED, "family": ModelFamily.GEMINI},
+    {"provider": ModelProvider.BEDROCK, "variant": ModelVariant.ADVANCED, "family": ModelFamily.MISTRAL},
+]
+
 langfuse = Langfuse()
 langfuse.auth_check()
 
-llm_client = get_llm_client()
+llm_client = get_client(LLM_CLIENT)
 
 def run_my_langchain_llm_app(data_input: str, callback_handler: Any) -> Any: # noqa: ANN401
     """
@@ -93,8 +104,10 @@ def main() -> None:
         dataset_output = item.expected_output["content"]
         completion = run_my_langchain_llm_app(dataset_input, handler)
 
-        execute_eval_and_score(dataset_input, dataset_output, completion,
-                               handler, EVAL_TYPES, CUSTOM_SCORING_FUNCTIONS)
+        for eval_client_config in EVAL_CLIENTS:
+            eval_client = get_client(eval_client_config)
+            execute_eval_and_score(dataset_input, dataset_output, completion,
+                                   handler, EVAL_TYPES, CUSTOM_SCORING_FUNCTIONS, eval_client)
 
 if __name__ == "__main__":
     main()
