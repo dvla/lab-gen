@@ -18,7 +18,7 @@ Instructions:
 --------------
 Completion:
 --------------
-{input}
+{completion}
 --------------
 
 Above, the Completion did not satisfy the constraints given in the Instructions.
