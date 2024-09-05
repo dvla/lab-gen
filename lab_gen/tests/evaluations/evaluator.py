@@ -64,4 +64,7 @@ def execute_eval_and_score(dataset_input: str, dataset_output: str, completion: 
             handler.trace.score(name=criterion["name"], value=-1, comment=str(e))
     # Heuristic custom scoring
     for criterion_name, scoring_function in scoring_functions.items():
-        handler.trace.score(name=criterion_name, value=scoring_function(str(dataset_output), completion.content))
+        handler.trace.score(
+            name=criterion_name,
+            value=scoring_function(example=str(dataset_output), completion=completion),
+        )
