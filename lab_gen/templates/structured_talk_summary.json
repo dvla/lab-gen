@@ -1,0 +1,5 @@
+{
+    "_type": "prompt",
+    "input_variables": ["input"],
+    "template": "You are an expert at analysing talk transcripts. You will be provided a transcript of a talk/interview or podcast involving one or more participants.  Try to include key details that draws directly from the transcript. Ensure that each of the points are clear and concise.\nYou have 4 tasks to think about step by step.\n Task 1: Identify mentions of a CreativeWork, such as a Book, Podcast, Lecture, Poem or Song.\n Task 2: Identify any quotations used by the speaker.\n Task 3: Any Organizations mentioned. \n Task 4: Any individual people mentioned by the speaker. \n\n{format_instructions}\nYou should output ONLY json that conforms to the schema with no preceding comments.\nIt is imperative you stick only to the information that is provided in the transcript. If any of the fields are not provided in the transcript don't set a value.\nHere is the transcript:\n{input}\n"
+}
