@@ -18,7 +18,7 @@ def load_prompts() -> tuple[dict[str, list[str]], dict[str, BasePromptTemplate]]
     try:
         for root, _dirs, files in os.walk(settings.prompts_dir):
             for file in files:
-                if not file.startswith("_") and file.endswith(".json"):
+                 if not file.startswith("_") and file.endswith((".json", ".yml", ".yaml")):
                     file_path = Path(root) / file
                     logger.info(f"Loading file: {file_path}")
                     file_key = file_path.stem.lower()

@@ -23,6 +23,8 @@ class Metric(Enum):
     COUNT_SUCCESSFUL_JSON = "successful_json_counter"
     COUNT_FIXED_JSON = "fixed_json_counter"
     COUNT_FAILED_JSON = "failed_json_counter"
+    COUNT_VOTE_UP = "positive_feedback_counter"
+    COUNT_VOTE_DOWN = "negative_feedback_counter"
 
 
 class MetricsService:
@@ -61,8 +63,12 @@ class MetricsService:
                 meter.create_histogram(Metric.COUNT_FIXED_JSON.value))
         setattr(self._app.state, Metric.COUNT_FAILED_JSON.value,
                 meter.create_counter(Metric.COUNT_FAILED_JSON.value))
+        setattr(self._app.state, Metric.COUNT_VOTE_UP.value,
+                meter.create_counter(Metric.COUNT_VOTE_UP.value))
+        setattr(self._app.state, Metric.COUNT_VOTE_DOWN.value,
+                meter.create_counter(Metric.COUNT_VOTE_DOWN.value))
 
-    def increment(self, metric: Metric, meta: dict, value: float = 1) -> None:
+    def increment(self, metric: Metric, meta: dict, value: float = 1, custom_meta: dict[str, str] = {}) -> None:  # noqa: B006
         """
         Increment the given metrics counter by the specified value (default 1 if not provided).
 
@@ -79,13 +85,15 @@ class MetricsService:
         if hasattr(self._app.state, metric_name):
             counter = getattr(self._app.state, metric_name)
             if isinstance(counter, Counter):
-                counter.add(value, {
+                metrics_meta = {
                     "business_user": meta["business_user"],
                     "environment": settings.environment,
                     "family": meta["family"].value,
                     "provider": meta["provider"].value,
                     "variant": meta["variant"].value,
-                })
+                }
+                metrics_meta.update(custom_meta)
+                counter.add(value, metrics_meta)
 
     def record(self, metric: Metric, meta: dict, value: float) -> None:
         """
