@@ -22,13 +22,14 @@ from langfuse.callback import CallbackHandler
 from lab_gen.datatypes.errors import NoConversationError
 from lab_gen.datatypes.metadata import ConversationMetadata
 from lab_gen.datatypes.models import ModelProvider
+from lab_gen.services.chat_history.cosmos_db import CosmosDBChatMessageHistory
+from lab_gen.services.chat_history.file_chat import FileChatHistory
 from lab_gen.services.conversation.block_content import (
     AzureBlockedContentTracker,
     BedrockBlockedContentTracker,
     BlockedContentTracker,
     VertexBlockedContentTracker,
 )
-from lab_gen.services.cosmos.cosmos_db import CosmosDBChatMessageHistory
 from lab_gen.services.llm.lifetime import get_llm, get_model
 from lab_gen.services.metrics.llm_metrics_counter import LLMMetricsCounter
 from lab_gen.services.metrics.metrics import Metric
@@ -224,11 +225,18 @@ class ConversationService:
             metadata (dict[str, Any] | None, optional): Additional metadata for the conversation. Defaults to None.
 
         Returns:
-            ChatMessageHistory: The chat message history for the user and conversation.
+            ChatMessageHistory: The chat message history for the user and conversation
         """
         meta = None if metadata is None else ConversationMetadata.model_validate(metadata)
-        return CosmosDBChatMessageHistory(
-            self.app.state.cosmos_client,
+
+        if hasattr(self.app.state, "cosmos_client"):
+           return CosmosDBChatMessageHistory(
+                self.app.state.cosmos_client,
+                session_id=conversation_id,
+                user_id=user_id,
+                metadata=meta,
+        )
+        return FileChatHistory(
             session_id=conversation_id,
             user_id=user_id,
             metadata=meta,

@@ -3,7 +3,7 @@ import pytest
 from langchain_core.messages import AIMessage, HumanMessage
 
 from lab_gen.datatypes.errors import InvalidParamsError, NoConversationError
-from lab_gen.services.cosmos.cosmos_db import CosmosDBChatMessageHistory
+from lab_gen.services.chat_history import chat_message
 
 
 def test_calculate_messages_deletes_correct_number_of_sets() -> None:
@@ -12,7 +12,7 @@ def test_calculate_messages_deletes_correct_number_of_sets() -> None:
     num_entries = 2
     expected_length = 2  # 3 pairs initially, 2 pairs to be deleted, 1 pair remains
 
-    updated_messages = CosmosDBChatMessageHistory.calculate_messages(messages, num_entries)
+    updated_messages = chat_message.calculate_messages(messages, num_entries)
 
     assert len(updated_messages) == expected_length
 
@@ -23,7 +23,7 @@ def test_error_is_raised_when_deleting_more_than_available() -> None:
     num_entries = 3  # Attempt to delete 3 sets from a list containing only 2 sets
 
     with pytest.raises(InvalidParamsError) as excinfo:
-        CosmosDBChatMessageHistory.calculate_messages(messages, num_entries)
+       chat_message.calculate_messages(messages, num_entries)
 
     assert "greater than the amount of messages" in str(excinfo.value)
 
@@ -33,7 +33,7 @@ def test_error_is_raised_when_num_entries_equals_zero_or_negative_numbers() -> N
     num_entries = 0
 
     with pytest.raises(InvalidParamsError) as excinfo:
-        CosmosDBChatMessageHistory.calculate_messages(messages, num_entries)
+        chat_message.calculate_messages(messages, num_entries)
 
     assert "must be greater than 0" in str(excinfo.value)
 
@@ -43,7 +43,7 @@ def test_error_raised_when_list_of_messages_is_empty() -> None:
     num_entries = 1
 
     with pytest.raises(NoConversationError) as excinfo:
-        CosmosDBChatMessageHistory.calculate_messages(messages, num_entries)
+        chat_message.calculate_messages(messages, num_entries)
 
     assert "No messages found" in str(excinfo.value)
 
@@ -57,7 +57,7 @@ def test_error_raised_when_odd_number_of_messages() -> None:
     num_entries = 1
 
     with pytest.raises(InvalidParamsError) as excinfo:
-        CosmosDBChatMessageHistory.calculate_messages(messages, num_entries)
+        chat_message.calculate_messages(messages, num_entries)
 
     assert "even number of 'human' and 'ai' messages" in str(excinfo.value)
 
@@ -71,5 +71,5 @@ def test_calculate_messages_deletes_all_messages() -> None:
     ]
     num_entries = 2  # All sets should be deleted
 
-    updated_messages = CosmosDBChatMessageHistory.calculate_messages(messages, num_entries)
+    updated_messages = chat_message.calculate_messages(messages, num_entries)
     assert updated_messages == []

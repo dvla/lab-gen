@@ -11,10 +11,10 @@ from langchain_core.messages import (
 )
 from loguru import logger
 
-from lab_gen.datatypes.errors import InvalidParamsError, NoConversationError
-from lab_gen.datatypes.messages import MESSAGE_TYPE_AI
+from lab_gen.datatypes.errors import InvalidParamsError
 from lab_gen.datatypes.metadata import ConversationMetadata
-from lab_gen.services.cosmos.lifetime import CONTAINER_NAME, DATABASE_NAME
+from lab_gen.services.chat_history import chat_message
+from lab_gen.services.chat_history.lifetime import CONTAINER_NAME, DATABASE_NAME
 
 
 if TYPE_CHECKING:
@@ -88,47 +88,6 @@ class CosmosDBChatMessageHistory(BaseChatMessageHistory):
                 item=self.session_id, partition_key=self.user_id,
             )
 
-    @staticmethod
-    def calculate_messages(messages: list[BaseMessage], num_entries: int) -> list[BaseMessage]:
-        """
-        Calculate the messages to delete based on the given criteria.
-
-        Args:
-            messages (list[BaseMessage]): The list of messages to process.
-            num_entries (int): The number of message sets to delete.
-
-        Raises:
-            NoConversationError: If no messages are found.
-            InvalidParamsError: If the number of message sets to delete is greater than the amount of messages in the
-            conversation, or if the amount of messages to delete is less than or equal to 0, or if the messages list
-            does not consist of an even number of 'human' and 'ai' messages.
-
-        Returns:
-            list[BaseMessage]: The updated list of messages after processing.
-        """
-        if not messages:
-            msg = "No messages found"
-            raise NoConversationError(msg)
-
-        total_entries_to_delete = num_entries * 2  # since one set is "human" + "ai"
-
-        if total_entries_to_delete > len(messages):
-            msg = "Amount of message sets to delete is greater than the amount of messages in the conversation"
-            raise InvalidParamsError(msg)
-
-        if num_entries <= 0:
-            msg = "Amount of messages to delete must be greater than 0"
-            raise InvalidParamsError(msg)
-
-        if len(messages) % 2 != 0:
-            msg = "The messages list does not consist of an even number of 'human' and 'ai' messages"
-            raise InvalidParamsError(msg)
-
-        if messages[-1].type == MESSAGE_TYPE_AI:
-            messages = messages[:-total_entries_to_delete]
-
-        return messages
-
     def delete(self, num_entries: int) -> None:
         """Delete a message from the memory."""
         if not self._container:
@@ -137,6 +96,6 @@ class CosmosDBChatMessageHistory(BaseChatMessageHistory):
 
         logger.debug(f"Deleting {num_entries} entry pairs from conversation {self.session_id}")
         message_length = len(self.messages)
-        self.messages = self.calculate_messages(self.messages, num_entries)
+        self.messages = chat_message.calculate_messages(self.messages, num_entries)
         if len(self.messages) != message_length:
             self.upsert_messages()

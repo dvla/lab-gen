@@ -27,7 +27,9 @@ def init_cosmosdb(app: FastAPI) -> None:
             partition_key=PartitionKey("/user_id"),
             default_ttl=settings.session_store_ttl,
         )
+        logger.info("CosmosDB initialized successfully."+settings.session_store_uri)
+        app.state.cosmos_client = client
     except Exception as e:  # noqa: BLE001
-        logger.error(f"Error initializing CosmosDB client: {e}")
+        logger.error(f"Error in initializing CosmosDB client: {e}")
         client = None
-    app.state.cosmos_client = client
+        logger.info("CosmosDB failed to started, will attempt to use a FileChatHistory instead.")

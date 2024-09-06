@@ -125,6 +125,7 @@ class Settings(BaseSettings):
 
     static_dir: Path = APP_DIR / "static"
     prompts_dir: Path = APP_DIR / "templates"
+    chat_history_dir: Path = APP_DIR.parent / "filestorage"
     # Endpoint for opentelemetry.
     # E.G. http://localhost:4317
     opentelemetry_endpoint: str | None = None

@@ -14,8 +14,8 @@ from slowapi import Limiter, _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
 from slowapi.util import get_remote_address
 
+from lab_gen.services.chat_history.lifetime import init_cosmosdb
 from lab_gen.services.conversation.lifetime import init_conversation
-from lab_gen.services.cosmos.lifetime import init_cosmosdb
 from lab_gen.services.llm.lifetime import init_models
 from lab_gen.services.metrics.lifetime import init_metrics
 from lab_gen.settings import settings
