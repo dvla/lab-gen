@@ -23,8 +23,8 @@ class Metric(Enum):
     COUNT_SUCCESSFUL_JSON = "successful_json_counter"
     COUNT_FIXED_JSON = "fixed_json_counter"
     COUNT_FAILED_JSON = "failed_json_counter"
-    COUNT_VOTE_UP = "positive_feedback_counter"
-    COUNT_VOTE_DOWN = "negative_feedback_counter"
+    COUNT_VOTE_UP = "feedback_positive_counter"
+    COUNT_VOTE_DOWN = "feedback_negative_counter"
 
 
 class MetricsService:
