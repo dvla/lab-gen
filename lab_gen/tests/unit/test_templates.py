@@ -60,3 +60,26 @@ def test_read_prompts(fastapi_app: FastAPI) -> None:
 
         response = test_client.get(url)
         assert response.status_code == status.HTTP_403_FORBIDDEN
+
+
+
+@pytest.mark.anyio()
+def test_read_prompts_by_id(fastapi_app: FastAPI) -> None:
+    """Tests the read_prompt by Id API endpoint."""
+    with TestClient(fastapi_app) as test_client:
+        url = fastapi_app.url_path_for("read_prompt", prompt_id="joke")
+        response = test_client.get(url, headers={"Authorization": "pytest_key"})
+        assert response.status_code == status.HTTP_200_OK
+        res = response.json()
+        assert res["prompt"] == "Tell me a {joke_type} joke about {input}."
+
+@pytest.mark.anyio()
+def test_read_prompts_by_id_not_found(fastapi_app: FastAPI) -> None:
+    """Tests the read_prompt by Id API endpoint when the prompt is not found."""
+    with TestClient(fastapi_app) as test_client:
+        url = fastapi_app.url_path_for("read_prompt", prompt_id="game")
+        response = test_client.get(url, headers={"Authorization": "pytest_key"})
+        assert response.status_code == status.HTTP_404_NOT_FOUND
+        res = response.json()
+        assert "detail" in res
+        assert res["detail"] == "Prompt not found"
