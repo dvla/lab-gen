@@ -1,4 +1,3 @@
-
 from enum import Enum
 
 from azure.monitor.opentelemetry import configure_azure_monitor
@@ -9,6 +8,9 @@ from opentelemetry.sdk.metrics import Counter, Histogram
 
 from lab_gen.services.metrics.llm_metrics_counter import LLMMetricsCounter
 from lab_gen.settings import settings
+
+
+METRICS_AVAILABLE = "metrics_available"
 
 
 class Metric(Enum):
@@ -38,6 +40,7 @@ class MetricsService:
         if settings.azure_monitor_connection_string:
             # Configure Azure Monitor with the connection string from settings
             configure_azure_monitor(connection_string=settings.azure_monitor_connection_string)
+            setattr(self._app.state, METRICS_AVAILABLE, True)
         else:
             logger.warning("APPLICATIONINSIGHTS_CONNECTION_STRING not found. Metrics will not be collected.")
 
@@ -112,13 +115,16 @@ class MetricsService:
         if hasattr(self._app.state, metric_name):
             histogram = getattr(self._app.state, metric_name)
             if isinstance(histogram, Histogram):
-                histogram.record(value, {
-                    "business_user": meta["business_user"],
-                    "environment": settings.environment,
-                    "family": meta["family"].value,
-                    "provider": meta["provider"].value,
-                    "variant": meta["variant"].value,
-                })
+                histogram.record(
+                    value,
+                    {
+                        "business_user": meta["business_user"],
+                        "environment": settings.environment,
+                        "family": meta["family"].value,
+                        "provider": meta["provider"].value,
+                        "variant": meta["variant"].value,
+                    },
+                )
 
     def record_llm_metrics(self, metric_counter: LLMMetricsCounter, meta: dict) -> None:
         """Record LLM metrics."""

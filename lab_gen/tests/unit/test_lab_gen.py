@@ -16,4 +16,7 @@ async def test_health(client: AsyncClient, fastapi_app: FastAPI) -> None:
     url = fastapi_app.url_path_for("health_check")
     response = await client.get(url)
     assert response.status_code == status.HTTP_200_OK
-    assert response.json() == {"status": "UP"}
+    assert response.json() == {
+        "status": "OUT_OF_SERVICE",
+        "detail": {"cosmos": "OUT_OF_SERVICE", "metrics": "OUT_OF_SERVICE"},
+    }
