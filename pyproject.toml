@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "lab_gen"
-version = "0.1.1"
+version = "0.2.0-alpha.1"
 description = "DVLA Emerging Tech Lab Generative AI project"
 authors = []
 license = "MIT"
@@ -157,6 +157,7 @@ version_toml = [
 ]
 remote.domain = "https://dev.azure.com/"
 changelog.template_dir = "release_templates"
+no_git_verify = true
 
 [tool.semantic_release.branches.main]
 match = "(main|master)"
