@@ -128,7 +128,7 @@ stages:
         deploy:
           steps:
           - script: |
-              semantic-release version
+              semantic-release version --no-vcs-release
             displayName: "Create release"
           - task: AzureRmWebAppDeployment@4
             displayName: Deploy the docker image to the production Web App
