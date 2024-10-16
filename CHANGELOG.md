@@ -1,6 +1,13 @@
 # CHANGELOG
 
 
+## v0.2.0-alpha.2 (2024-10-16)
+
+### Features
+
+* feat: ET-1571: migrate from langchain_core.pydantic_v1 to pydantic for improved library support and compatibility with latest versions ([`56f7019`](https://dev.azure.com/DvlaEmergingTech/lab-gen/_git/lab-gen-api/commit/56f7019f2122542489b75f283f00f8f1e26ce639))
+
+
 ## v0.2.0-alpha.1 (2024-10-16)
 
 ### Features
