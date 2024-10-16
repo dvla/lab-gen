@@ -5,6 +5,8 @@
 
 ### Features
 
+* feat: ET-1571: update config ([`e91b188`](https://dev.azure.com/DvlaEmergingTech/lab-gen/_git/lab-gen-api/commit/e91b1889cc174380b6e3b9addcf953c1ede897d6))
+
 * feat: ET-1571: disable trailing-whitespace hook in pre-commit-config.yaml and add --no-vcs-release flag to semantic-release version command in azure-pipelines.yml to prevent automatic VCS release triggering. ([`ed53492`](https://dev.azure.com/DvlaEmergingTech/lab-gen/_git/lab-gen-api/commit/ed534921140d09853c17c61954fb5c932b1cd385))
 
 * feat: ET-1571: update dependencies and add semantic-release for automated versioning and changelog generation ([`db89061`](https://dev.azure.com/DvlaEmergingTech/lab-gen/_git/lab-gen-api/commit/db890618e3396b77b9b35b992829a72c6c42947e))
@@ -89,3 +91,4 @@
 * ET-1511: add new metrics for successful, fixed, and failed JSON counts... ([`d22b6fa`](https://dev.azure.com/DvlaEmergingTech/lab-gen/_git/lab-gen-api/commit/d22b6fafd3f5dac1c180671aa51769974731118c))
 
 * Initial import of Git Repo ([`1339b43`](https://dev.azure.com/DvlaEmergingTech/lab-gen/_git/lab-gen-api/commit/1339b43cd58fbe4332cffece1264b674663982c0))
+
