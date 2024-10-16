@@ -1,0 +1,13 @@
+{#
+#}{%  for type_, commits in commit_objects
+%}
+{{
+          "### %s" | format(type_ | title)
+
+}}
+{%    for commit in commits
+%}
+* {{ commit.subject | default(commit.message.split('\n')[0]) }} ([`{{ commit.short_hash }}`]({{ commit.hexsha | commit_hash_url }}))
+{%    endfor
+%}{%  endfor
+%}
