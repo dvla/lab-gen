@@ -1,7 +1,6 @@
 from enum import Enum
 
-# Current forced to use pydantic_v1 due to lack of langchain support.
-from langchain_core.pydantic_v1 import BaseModel, Field
+from pydantic import BaseModel, Field
 
 
 class Vehicle(BaseModel):

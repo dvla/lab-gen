@@ -4,8 +4,8 @@ from langchain_core.exceptions import OutputParserException
 from langchain_core.messages import AIMessage
 from langchain_core.output_parsers import JsonOutputParser
 from langchain_core.prompts.prompt import PromptTemplate
-from langchain_core.pydantic_v1 import ValidationError
 from loguru import logger
+from pydantic import ValidationError
 
 
 STRICT_FIX = """You must output formatted JSON.
@@ -32,7 +32,7 @@ Please try again. Please only respond with an answer that satisfies the constrai
 
 class StrictJsonOutputParser(JsonOutputParser):
     """This class is a strict implementation of the JsonOutputParser class."""
-    prompt = PromptTemplate.from_template(STRICT_FIX)
+    prompt : PromptTemplate = PromptTemplate.from_template(STRICT_FIX)
 
     def get_format_instructions(self) -> str:
         """

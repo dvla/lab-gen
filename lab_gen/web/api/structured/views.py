@@ -10,8 +10,8 @@ from langchain.output_parsers import OutputFixingParser
 from langchain_core.exceptions import OutputParserException
 from langchain_core.output_parsers import JsonOutputParser
 from langchain_core.prompts import ChatPromptTemplate, HumanMessagePromptTemplate
-from langchain_core.pydantic_v1 import ValidationError
 from loguru import logger
+from pydantic import ValidationError
 from starlette.status import HTTP_400_BAD_REQUEST, HTTP_500_INTERNAL_SERVER_ERROR
 
 from lab_gen.datatypes.calls import Call
