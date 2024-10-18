@@ -127,8 +127,15 @@ stages:
       runOnce:
         deploy:
           steps:
+          - checkout: self
+          - task: UsePythonVersion@0
+            inputs:
+              versionSpec: "3.12"
+            displayName: "Use Python 3.12"
           - script: |
-              semantic-release version --no-vcs-release
+              pipx install poetry
+              poetry install --with=dev
+              poetry run semantic-release version --no-vcs-release
             displayName: "Create release"
           - task: AzureRmWebAppDeployment@4
             displayName: Deploy the docker image to the production Web App
