@@ -50,7 +50,9 @@ stages:
       inputs:
         versionSpec: "$(python.version)"
       displayName: "Use Python $(python.version)"
-
+    - script: |
+        echo "Source branch is $(Build.SourceBranch)"
+        echo "Current branch is $(git branch --show-current)"
     - script: |
         pipx install poetry
         poetry install --with=dev,test
@@ -128,6 +130,15 @@ stages:
         deploy:
           steps:
           - checkout: self
+            persistCredentials: true
+            displayName: "Checking out git repository"
+          - script: |
+              echo "Current branch is $(git branch --show-current)"
+              git fetch --all
+              echo "Switching branch to $(basename $(Build.SourceBranch))"
+              git switch $(basename $(Build.SourceBranch))
+              echo "Git branch is $(git rev-parse --abbrev-ref HEAD)"
+            displayName: "Checking out branch"
           - task: UsePythonVersion@0
             inputs:
               versionSpec: "3.12"

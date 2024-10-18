@@ -159,7 +159,7 @@ remote.domain = "https://dev.azure.com/"
 changelog.template_dir = "release_templates"
 
 [tool.semantic_release.branches.main]
-match = "(main|master)"
+match = "main"
 prerelease = false
 
 [tool.semantic_release.branches."New Features"]

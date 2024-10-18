@@ -1,21 +1,13 @@
 # CHANGELOG
 
 
-## v0.2.0-alpha.2 (2024-10-16)
+## v0.2.0-alpha.1+feature/releaseMe (2024-10-18)
 
 ### Features
 
-* feat: ET-1571: migrate from langchain_core.pydantic_v1 to pydantic for improved library support and compatibility with latest versions ([`56f7019`](https://dev.azure.com/DvlaEmergingTech/lab-gen/_git/lab-gen-api/commit/56f7019f2122542489b75f283f00f8f1e26ce639))
+* feat: ET-1571: switch from using 'semantic-release version' to 'poetry run semantic-release version' in Azure Pipelines ([`171aefd`](https://dev.azure.com/DvlaEmergingTech/lab-gen/_git/lab-gen-api/commit/171aefdd996d1d08291b38af850fece987f330eb))
 
-## v0.2.0-alpha.1 (2024-10-16)
-
-### Features
-
-* feat: ET-1571: update config ([`e91b188`](https://dev.azure.com/DvlaEmergingTech/lab-gen/_git/lab-gen-api/commit/e91b1889cc174380b6e3b9addcf953c1ede897d6))
-
-* feat: ET-1571: disable trailing-whitespace hook in pre-commit-config.yaml and add --no-vcs-release flag to semantic-release version command in azure-pipelines.yml to prevent automatic VCS release triggering. ([`ed53492`](https://dev.azure.com/DvlaEmergingTech/lab-gen/_git/lab-gen-api/commit/ed534921140d09853c17c61954fb5c932b1cd385))
-
-* feat: ET-1571: update dependencies and add semantic-release for automated versioning and changelog generation ([`db89061`](https://dev.azure.com/DvlaEmergingTech/lab-gen/_git/lab-gen-api/commit/db890618e3396b77b9b35b992829a72c6c42947e))
+* feat: ET-1571: update dependencies and add semantic-release for automated versioning and changelog generation ([`806e66f`](https://dev.azure.com/DvlaEmergingTech/lab-gen/_git/lab-gen-api/commit/806e66fa7b4dd58dc04b42c38d42a5d4601f4444))
 
 * feat: ET-1554: adding additional services to Health Check Endpoint ([`ab5ef56`](https://dev.azure.com/DvlaEmergingTech/lab-gen/_git/lab-gen-api/commit/ab5ef56c34154a0b846b68e57854a058f00b8b5d))
 
