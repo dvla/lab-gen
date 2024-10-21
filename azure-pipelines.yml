@@ -134,7 +134,7 @@ stages:
             displayName: "Checking out git repository"
           - script: |
               echo "Current branch is $(git branch --show-current)"
-              git fetch origin main
+              git fetch --all
               git fetch --tags
               echo "Switching branch to $(basename $(Build.SourceBranch))"
               git switch $(basename $(Build.SourceBranch))
@@ -147,6 +147,19 @@ stages:
           - script: |
               pipx install poetry
               poetry install --with=dev
+            displayName: "Install dependencies"
+          - script: |
+              echo "Last released: $(poetry run semantic-release version --print-last-released)"
+              echo "Next release : $(poetry run semantic-release version --print-tag)"
+              echo "Git command 1"
+              echo "Mergebase is $(git merge-base v0.1.1 main)"
+              echo "Git command 2"
+              echo "rev-list is $(git rev-list v0.1.1... --)"
+              echo "Git command 3"
+              echo "Mergebase is $(git merge-base v0.1.1 main | git cat-file --batch-check)"
+              poetry run semantic-release --noop version --no-vcs-release
+            displayName: "Git test commands"
+          - script: |
               poetry run semantic-release version --no-vcs-release
             displayName: "Create release"
           - task: AzureRmWebAppDeployment@4
