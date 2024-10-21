@@ -46,6 +46,9 @@ class ConversationService:
         self.app = app
         self.examples = examples
         self.prompts = prompts
+        self.all_prompts = {}
+        for key, value in self.prompts.items():
+            self.all_prompts[key] = value.input_variables
 
     def create_chain(self, llm: BaseLanguageModel, prompt: ChatPromptTemplate) -> RunnableWithMessageHistory:
         """
@@ -291,9 +294,9 @@ class ConversationService:
             return history.clear()
         raise NoConversationError(conversation_id)
 
-    def get_prompts(self) -> dict[str, list[str]]:
+    def get_prompts(self, categories: str) -> dict[str, list[str]]:
         """Gets the example prompts configured for this service."""
-        return self.examples
+        return self.all_prompts if categories else self.examples
 
     def get_prompt(self, prompt_id: str) -> StringPromptTemplate:
         """Gets the prompt template for the given prompt ID."""

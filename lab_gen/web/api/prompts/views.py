@@ -1,4 +1,4 @@
-from fastapi import Depends, HTTPException
+from fastapi import Depends, HTTPException, Query
 from fastapi.routing import APIRouter
 
 from lab_gen.services.conversation.conversation import ConversationService
@@ -13,13 +13,14 @@ async def read_prompts(
     *,
     api_key: bool = Depends(get_api_key),  # noqa: ARG001
     conversation: ConversationService = Depends(conversation_provider),  # noqa: B008
+    show: str | None = Query(default=None, description="The category of prompts to show."),
 ) -> dict[str, list[str]]:
     """Returns available prompts.
 
     Returns:
         Mapping of prompt names to prompt texts.
     """
-    return conversation.get_prompts()
+    return conversation.get_prompts(show)
 
 @router.get("/prompts/{prompt_id}")
 async def read_prompt(  # noqa: D417
