@@ -1,9 +1,21 @@
 # CHANGELOG
 
 
-## v0.2.0-alpha.1+feature/releaseMe (2024-10-18)
+## v0.2.0 (2024-10-24)
 
 ### Features
+
+* feat: ET-1571: Adding git checkout for semantic-release ([`bf04dd7`](https://dev.azure.com/DvlaEmergingTech/lab-gen/_git/lab-gen-api/commit/bf04dd7c888888f4a50a9ff206bb4992ba878847))
+
+* feat: ET-1570: Try htmx on lab gen api ([`941670b`](https://dev.azure.com/DvlaEmergingTech/lab-gen/_git/lab-gen-api/commit/941670bcf1194e15bbd0fdc27785a50f5ce7a31c))
+
+* feat: ET-1571: Improve git integration with release plugin ([`aef4f6f`](https://dev.azure.com/DvlaEmergingTech/lab-gen/_git/lab-gen-api/commit/aef4f6f1b2cc78ad487d146a9670bfb7eacfffb8))
+
+* feat: ET-1594: add support for retrieving all prompts by category ([`d6ee77e`](https://dev.azure.com/DvlaEmergingTech/lab-gen/_git/lab-gen-api/commit/d6ee77eaf5dd606cdab9b380df6cf8092e4bdf76))
+
+* feat: ET-1571: Fetch and merge branches/tags ([`4ef83f1`](https://dev.azure.com/DvlaEmergingTech/lab-gen/_git/lab-gen-api/commit/4ef83f153fecc0456eb4e93f0c2c3c1c39bd8d9a))
+
+* feat: ET-1571: Checkout branch during build to do a semantic-release ([`b1d1338`](https://dev.azure.com/DvlaEmergingTech/lab-gen/_git/lab-gen-api/commit/b1d13389ec7fcbbbc99c920cbed2d322e2a9c029))
 
 * feat: ET-1571: switch from using 'semantic-release version' to 'poetry run semantic-release version' in Azure Pipelines ([`171aefd`](https://dev.azure.com/DvlaEmergingTech/lab-gen/_git/lab-gen-api/commit/171aefdd996d1d08291b38af850fece987f330eb))
 

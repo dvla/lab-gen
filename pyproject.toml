@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "lab_gen"
-version = "0.2.0-alpha.2"
+version = "0.2.0"
 description = "DVLA Emerging Tech Lab Generative AI project"
 authors = []
 license = "MIT"
