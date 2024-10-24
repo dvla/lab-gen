@@ -56,7 +56,7 @@ isort = "^5.11.4"
 pre-commit = "^4.0.1"
 autoflake = "^2.2.1"
 devtools = "^0.12.2"
-mysql-connector-python = "9.0.0"
+mysql-connector-python = "9.1.0"
 python-semantic-release = "^9.9.0"
 
 [tool.poetry.group.test.dependencies]
