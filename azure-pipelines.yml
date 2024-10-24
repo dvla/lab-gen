@@ -134,7 +134,7 @@ stages:
             displayName: "Checking out git repository"
           - script: |
               echo "Current branch is $(git branch --show-current)"
-              git fetch --all
+              git fetch --all --unshallow
               git fetch --tags
               echo "Switching branch to $(basename $(Build.SourceBranch))"
               git switch $(basename $(Build.SourceBranch))
@@ -151,12 +151,8 @@ stages:
           - script: |
               echo "Last released: $(poetry run semantic-release version --print-last-released)"
               echo "Next release : $(poetry run semantic-release version --print-tag)"
-              echo "Git command 1"
               echo "Mergebase is $(git merge-base v0.1.1 main)"
-              echo "Git command 2"
               echo "rev-list is $(git rev-list v0.1.1... --)"
-              echo "Git command 3"
-              echo "Mergebase is $(git merge-base v0.1.1 main | git cat-file --batch-check)"
               poetry run semantic-release --noop version --no-vcs-release
             displayName: "Git test commands"
           - script: |
