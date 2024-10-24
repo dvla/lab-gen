@@ -13,3 +13,5 @@ services:
     environment:
       LAB_GEN_HOST: 0.0.0.0
       LAB_GEN_PORT: 8000
+    extra_hosts:
+    - "host.docker.internal:host-gateway"

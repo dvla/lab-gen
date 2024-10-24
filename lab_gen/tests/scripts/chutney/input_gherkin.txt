@@ -1,0 +1,17 @@
+Feature: Order an Apple
+
+  Scenario: Customer orders a single apple
+    Given the customer is on the apple ordering page
+    When the customer selects "1" for the quantity of apples
+    And the customer provides their delivery address
+    And the customer clicks the "Order" button
+    Then the system should confirm the order
+    And the system should initiate the delivery process
+
+  Scenario: Customer orders multiple apples
+    Given the customer is on the apple ordering page
+    When the customer selects a quantity greater than "1" for the apples
+    And the customer provides their delivery address
+    And the customer clicks the "Order" button
+    Then the system should confirm the order
+    And the system should initiate the delivery process
