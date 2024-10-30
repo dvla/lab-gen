@@ -1,8 +1,10 @@
 from fastapi import Depends, HTTPException, Query
 from fastapi.routing import APIRouter
+from langchain_core.output_parsers import JsonOutputParser
 
 from lab_gen.services.conversation.conversation import ConversationService
 from lab_gen.services.conversation.dependencies import conversation_provider
+from lab_gen.web.api.structured.views import STRUCTURED
 from lab_gen.web.auth import get_api_key
 
 
@@ -21,7 +23,6 @@ async def read_prompts(
         Mapping of prompt names to prompt texts.
     """
     return conversation.get_prompts(show)
-
 @router.get("/prompts/{prompt_id}")
 async def read_prompt(  # noqa: D417
     *,
@@ -38,7 +39,25 @@ async def read_prompt(  # noqa: D417
         Prompt contents for a given prompt ID.
     """
     try:
+        # Retrieve the prompt template from the conversation service
         prompt_template = conversation.get_prompt(prompt_id)
-        return {"prompt": prompt_template.pretty_repr()}
-    except KeyError:
-        raise HTTPException(status_code=404, detail="Prompt not found")  # noqa: B904
+        # Access the main template
+        template = prompt_template.template  # type: ignore[attr-defined]
+        # Check if the prompt_id is in the STRUCTURED dictionary as a value in the "prompt" field
+        schema = next((value["schema"] for value in STRUCTURED.values() if value["prompt"] == prompt_id), None)
+        # If schema is found, add format instructions to the prompt
+        if schema:
+            lenient_parser = JsonOutputParser(pydantic_object=schema)
+            format_instructions = lenient_parser.get_format_instructions()
+            prompt = template.replace("{format_instructions}", format_instructions)
+        else:
+            prompt = template
+
+        response = {
+            "prompt": prompt,
+        }
+    except KeyError as err:
+        # Raise an HTTPException if the prompt ID is not found
+        raise HTTPException(status_code=404, detail="Prompt not found") from err
+    else:
+        return response

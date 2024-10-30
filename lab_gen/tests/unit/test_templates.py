@@ -83,3 +83,59 @@ def test_read_prompts_by_id_not_found(fastapi_app: FastAPI) -> None:
         res = response.json()
         assert "detail" in res
         assert res["detail"] == "Prompt not found"
+
+@pytest.mark.anyio()
+def test_read_prompts_by_id_with_format(fastapi_app: FastAPI) -> None:
+    """Tests the read_prompt endpoint with structured format instructions."""
+    with TestClient(fastapi_app) as test_client:
+        # Test reading the structured_talk_summary prompt
+        url = fastapi_app.url_path_for("read_prompt", prompt_id="structured_talk_summary")
+        response = test_client.get(url, headers={"Authorization": "pytest_key"})
+
+        # Verify successful response
+        assert response.status_code == status.HTTP_200_OK
+
+        # Parse response
+        res = response.json()
+
+        # Verify prompt template structure and content
+        assert "prompt" in res
+        prompt = res["prompt"]
+
+        # Verify schema components are properly included
+        assert '"$defs"' in prompt
+        assert '"CreativeWork"' in prompt
+        assert '"Organisation"' in prompt
+        assert '"Person"' in prompt
+        assert '"Quotation"' in prompt
+
+        # Verify format instructions
+        assert "Here is the output schema:" in prompt
+        assert "{input}" in prompt  # Template variable for input text
+
+        # Verify schema requirements
+        assert '"required": ["name", "description", "type"]' in prompt  # CreativeWork requirements
+        assert '"required": ["name", "description", "brands", "location"]' in prompt  # Organisation requirements
+        assert '"required": ["name", "description"]' in prompt  # Person requirements
+        assert '"required": ["creator", "text"]' in prompt  # Quotation requirements
+
+@pytest.mark.anyio()
+def test_read_prompts_by_id_without_format(fastapi_app: FastAPI) -> None:
+    """Tests the read_prompt endpoint to ensure response does not include format-specific components."""
+    with TestClient(fastapi_app) as test_client:
+        # Test reading a prompt without structured format requirements
+        url = fastapi_app.url_path_for("read_prompt", prompt_id="structured_talk_summary")
+        response = test_client.get(url, headers={"Authorization": "pytest_key"})
+
+        # Verify successful response
+        assert response.status_code == status.HTTP_200_OK
+
+        # Parse response
+        res = response.json()
+
+        # Check that the "prompt" field exists
+        assert "prompt" in res
+        prompt = res["prompt"]
+
+        # Verify the prompt does NOT contain any format-specific instructions or schema definitions
+        assert "{format_instructions}" not in prompt
