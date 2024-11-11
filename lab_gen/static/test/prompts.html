@@ -17,7 +17,6 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300..700&display=swap" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="../styles/prompts.css">
-    </style>
 </head>
 
 <body>
@@ -87,10 +86,18 @@
                     hx-on::after-request="setPromptID(event, '{{@key}}')" handlebars-template="single-prompt-template"
                     hx-indicator="#single-indicator">
                     <p>{{@key}}</p>
-                    <div class="prompt-fields">
-                        {{#each this}}
-                        <p class="tag">{{this}}</p>
-                        {{/each}}
+                    <div class="end">
+                        <div class="prompt-fields">
+                            {{#each this}}
+                            <p class="tag">{{this}}</p>
+                            {{/each}}
+                        </div>
+                        <div>
+                            <button onclick="tryPrompt(event, '{{@key}}', '{{this}}')"><svg
+                                    xmlns="http://www.w3.org/2000/svg" width="1.3em" height="1.3em" viewBox="0 0 16 16">
+                                    <path fill="#00e016" d="M3.78 2L3 2.41v12l.78.42l9-6V8zM4 13.48V3.35l7.6 5.07z" />
+                                </svg></button>
+                        </div>
                     </div>
                 </li>
                 {{/each}}
@@ -110,7 +117,6 @@
                     </svg>
                     Enter a prompt ID and click Run to get the prompt or click a prompt from Get All Prompts.
                 </div>
-
             </div>
         </div>
         <!-- Error Message -->
@@ -150,8 +156,21 @@
             </div>
         </template>
     </section>
-
     <script>
+        /**
+         * Runs when the page is loaded.
+         *
+         * Checks if API key is stored in local storage and populates the input field with it.
+         *
+         * @param {object} content - The content of the page.
+         */
+        htmx.onLoad(function (content) {
+            // Check if API key is stored in local storage
+            const apiKey = localStorage.getItem('api-key');
+            const apiKeyInput = document.getElementById('api-key');
+            apiKeyInput.value = apiKey;
+        })
+
         /**
          * Set the Authorization header for the given event with the value of the text field
          * with id 'api-key'.
@@ -160,6 +179,7 @@
         const setAuthorizationHeader = (event) => {
             var token = document.getElementById('api-key').value;
             event.detail.headers['Authorization'] = token;
+            localStorage.setItem('api-key', token);
         }
 
         /**
@@ -238,6 +258,17 @@
         const hideError = (event) => {
             const errorMessage = document.getElementById('all-error-message');
             errorMessage.setAttribute('hidden', '');
+        }
+
+        /**
+         * Opens the start conversation page with the given prompt and variables.
+         * @param {Event} event - The event object associated with the action.
+         * @param {string} key - The key of the prompt to start a conversation with.
+         * @param {string} val - The string of variables to use for the conversation.
+         */
+        const tryPrompt = (event, key, val) => {
+            event.preventDefault();
+            window.location.href = `/test/start.html?prompt=${key}&variables=${val}`
         }
     </script>
 </body>

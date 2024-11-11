@@ -56,7 +56,7 @@ section.header p{
     margin-bottom: 0;
 }
 
-input[type=password], input[type=text]{
+input[type=password], input[type=text], select{
     background: #f5f5f5;
     padding: 10px;
     font-family: "Quicksand";
@@ -66,7 +66,7 @@ input[type=password], input[type=text]{
     color: #555;
 }
 
-input[type=password]:focus, input[type=text]:focus{
+input[type=password]:focus, input[type=text]:focus, select:focus{
     outline: 2px solid #ddd;
 }
 
@@ -137,6 +137,28 @@ li > p{
     font-weight: 500;
 }
 
+li .end{
+    display: flex;
+    align-items: center;
+}
+
+li button{
+    margin: 0;
+    padding: 0;
+    height: 30px;
+    width: 30px;
+    background-color: #fff;
+    border-color: #ccc;
+}
+
+li button:hover{
+    background-color: #00b812;
+}
+
+li button svg{
+    margin: 0;
+}
+
 .prompt-fields{
     display: flex;
 }
@@ -189,11 +211,30 @@ section.border-top{
     display:none;
     margin-left: 10px;
 }
+
 .htmx-request .indicator{
     display:block;
 }
 .htmx-request.indicator{
     display:block;
+}
+
+.indicator-start{
+    margin: 0;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    background: #eee;
+    padding: 50px;
+    border-radius: 5px;
+    margin-top: 10px;
+}
+
+.htmx-request .indicator-start{
+    display:flex;
+}
+.htmx-request.indicator-start{
+    display:flex;
 }
 
 #single-prompt{
@@ -213,6 +254,18 @@ label{
     font-size: 0.9em;
     margin-bottom: 10px;
     display: inline-block;
+}
+
+#prompt-variables > p{
+    margin-bottom: 5px;
+    font-weight: 500;
+}
+
+#prompt-variables > input{
+    display: block;
+    margin: 10px 0;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 @media (min-width: 1500px){
