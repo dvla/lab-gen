@@ -46,35 +46,46 @@ stages:
           python.version: "3.11"
 
     steps:
-    - task: UsePythonVersion@0
-      inputs:
-        versionSpec: "$(python.version)"
-      displayName: "Use Python $(python.version)"
     - script: |
         echo "Source branch is $(Build.SourceBranch)"
         echo "Current branch is $(git branch --show-current)"
+    - script: pipx install uv
+      displayName: Install uv
     - script: |
-        pipx install poetry
-        poetry install --with=dev,test
-        poetry show --outdated --with=dev,test
-      displayName: "Install dependencies"
+        echo "##vso[task.setvariable variable=uv-cache-path;]$(uv cache dir)"
+      displayName: Set uv cache path
+    - task: Cache@2
+      displayName: Cache uv data
+      inputs:
+        key: '"uv cache" | "$(python.version)" | uv.lock'
+        restoreKeys: |
+          "uv cache" | "$(python.version)" | uv.lock
+          "uv cache" | "$(python.version)"
+          "uv cache"
+        path: $(uv-cache-path)
+    - script: |
+        uv sync
+      displayName: Install dependencies
 
     - script: |
-        poetry run ruff check lab_gen
+        uv run ruff check lab_gen
       displayName: "pylint"
 
     - script: |
-        poetry run pre-commit run --all-files
+        uv run pre-commit run --all-files
       displayName: "Check All Files"
 
     - script: |
         cp example.env .env
         mkdir secrets
-        poetry run pytest -vv
+        uv run pytest -vv
       displayName: "pytest"
     - task: PublishCodeCoverageResults@2
       inputs:
         summaryFileLocation: '$(System.DefaultWorkingDirectory)/**/*coverage.xml'
+    - script: |
+        uv lock --upgrade --dry-run
+      displayName: Check outdated dependencies
 
 - stage: Package
   displayName: Build and package docker image
@@ -145,18 +156,18 @@ stages:
               versionSpec: "3.12"
             displayName: "Use Python 3.12"
           - script: |
-              pipx install poetry
-              poetry install --with=dev
+              pipx install uv
+              uv sync --frozen
             displayName: "Install dependencies"
           - script: |
-              echo "Last released: $(poetry run semantic-release version --print-last-released)"
-              echo "Next release : $(poetry run semantic-release version --print-tag)"
+              echo "Last released: $(uv run semantic-release version --print-last-released)"
+              echo "Next release : $(uv run semantic-release version --print-tag)"
               echo "Mergebase is $(git merge-base v0.1.1 main)"
               echo "rev-list is $(git rev-list v0.1.1... --)"
-              poetry run semantic-release --noop version --no-vcs-release
+              uv run semantic-release --noop version --no-vcs-release
             displayName: "Git test commands"
           - script: |
-              poetry run semantic-release version --no-vcs-release
+              uv run semantic-release version --no-vcs-release
             displayName: "Create release"
           - task: AzureRmWebAppDeployment@4
             displayName: Deploy the docker image to the production Web App

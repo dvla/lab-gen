@@ -3,9 +3,8 @@
 ## Getting Started
 
 ## Prerequisites
-- Python 3.11
-- `pip install poetry`
-- `poetry install --with=dev,test`
+- `pipx install uv`
+- `uv sync`
 
 ### Quick Start
 
@@ -30,7 +29,7 @@ Setup your models config:
 
 Run the application:
 ```bash
-poetry run python -m lab_gen
+uv run python -m lab_gen
 ```
 
 This will start the server on the configured host.
@@ -142,7 +141,7 @@ For running tests on your local machine.
 
 2. Run the pytest.
 ```bash
-pytest -vv
+uv run pytest -vv
 ```
 
 ## Langfuse

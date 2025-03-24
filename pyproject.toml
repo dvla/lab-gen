@@ -1,73 +1,76 @@
-[tool.poetry]
-name = "lab_gen"
+[project]
+name = "lab-gen-api"
 version = "0.2.0"
 description = "DVLA Emerging Tech Lab Generative AI project"
-authors = []
-license = "MIT"
-readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "anthropic>=0.49.0",
+    "azure-appconfiguration>=1.7.1",
+    "azure-cosmos>=4.9.0",
+    "azure-monitor-opentelemetry>=1.6.5",
+    "boto3>=1.37.16",
+    "fastapi>=0.115.11",
+    "huggingface-hub>=0.29.3",
+    "langchain-anthropic>=0.3.10",
+    "langchain-aws>=0.2.16",
+    "langchain-community>=0.3.20",
+    "langchain-core>=0.3.46",
+    "langchain-google-vertexai>=2.0.15",
+    "langchain-mistralai>=0.2.8",
+    "langchain-openai>=0.3.9",
+    "langfuse>=2.60.0",
+    "langsmith>=0.3.18",
+    "loguru>=0.7.3",
+    "openai>=1.67.0",
+    "opentelemetry-api>=1.31.1",
+    "opentelemetry-exporter-otlp>=1.31.1",
+    "opentelemetry-instrumentation>=0.52b1",
+    "opentelemetry-instrumentation-fastapi>=0.52b1",
+    "opentelemetry-instrumentation-logging>=0.52b1",
+    "opentelemetry-sdk>=1.31.1",
+    "pydantic>=2.10.6",
+    "pydantic-settings>=2.8.1",
+    "python-jose[cryptography]>=3.4.0",
+    "python-multipart>=0.0.20",
+    "slowapi>=0.1.9",
+    "tiktoken>=0.9.0",
+    "transformers>=4.49.0",
+    "ujson>=5.10.0",
+    "uvicorn[standard]>=0.34.0",
+]
 
-[tool.poetry.dependencies]
-python = "^3.11"
-pydantic = "^2.9.2"
-pydantic-settings = "^2.5.2"
-fastapi = "^0.115.2"
-uvicorn = { version = "^0.32.0", extras = ["standard"] }
-opentelemetry-api = "^1.27.0"
-opentelemetry-sdk = "^1.27.0"
-opentelemetry-exporter-otlp = "^1.27.0"
-opentelemetry-instrumentation = "^0.48b0"
-opentelemetry-instrumentation-fastapi = "^0.48b0"
-opentelemetry-instrumentation-logging = "^0.48b0"
-ujson = "^5.8.0"
-openai = "^1.35.10"
-python-multipart = "^0.0.9"
-python-jose = {version = "^3.3.0", extras = ["cryptography"]}
-azure-appconfiguration = "^1.7.1"
-slowapi = "^0.1.8"
-azure-monitor-opentelemetry = "^1.6.2"
-tiktoken = "^0.8.0"
-langchain-core = "^0.3.10"
-langchain-aws = "^0.2.2"
-langchain-anthropic = "^0.2.3"
-langchain-openai = "^0.2.2"
-langchain-google-vertexai = "^2.0.5"
-langchain-community = "^0.3.2"
-langchain-mistralai = "^0.2.0"
-boto3 = "^1.35.41"
-anthropic = "^0.36.1"
-loguru = "^0.7.2"
-azure-cosmos = "^4.5.1"
-huggingface-hub = "^0.24.6"
-transformers = "^4.44.2"
-langsmith = "^0.1.135"
-langfuse = "^2.52.0"
+[dependency-groups]
+dev = [
+    "autoflake>=2.3.1",
+    "black>=25.1.0",
+    "devtools>=0.12.2",
+    "isort>=6.0.1",
+    "mypy>=1.15.0",
+    "mysql-connector-python>=9.0.0",
+    "pre-commit>=4.2.0",
+    "python-semantic-release>=9.21.0",
+    "ruff>=0.11.0",
+]
+test = [
+    "anyio>=4.9.0",
+    "httpx>=0.28.1",
+    "nltk>=3.9.1",
+    "pytest>=8.3.5",
+    "pytest-azurepipelines>=1.0.5",
+    "pytest-cov>=6.0.0",
+    "pytest-env>=1.1.5",
+    "textstat>=0.7.5",
+]
 
-[tool.poetry.group.dev]
-optional = true
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
 
-[tool.poetry.group.test]
-optional = true
+[tool.uv]
+default-groups = ["dev", "test"]
 
-[tool.poetry.group.dev.dependencies]
-black = "^24.4.2"
-ruff = "^0.6.1"
-mypy = "^1.1.1"
-isort = "^5.11.4"
-pre-commit = "^4.0.1"
-autoflake = "^2.2.1"
-devtools = "^0.12.2"
-mysql-connector-python = "9.0.0"
-python-semantic-release = "^9.9.0"
-
-[tool.poetry.group.test.dependencies]
-pytest = "^8.2.2"
-pytest-env = "^1.1.3"
-pytest-cov = "^5.0.0"
-pytest-azurepipelines = "^1.0.5"
-anyio = "^4.0.0"
-httpx = "^0.27.2"
-textstat = "^0.7.4"
-nltk = "^3.8.1"
+[tool.hatch.build.targets.wheel]
+packages = ["lab_gen"]
 
 [tool.isort]
 line_length=120
@@ -144,16 +147,10 @@ exclude_lines = [
 
 [tool.bandit]
 exclude_dirs = ["tests", "dist"]
-#tests = ["B201", "B301"]
-#skips = ["B101", "B601"]
-
-[build-system]
-requires = ["poetry-core>=1.0.0"]
-build-backend = "poetry.core.masonry.api"
 
 [tool.semantic_release]
 version_toml = [
-    "pyproject.toml:tool.poetry.version",
+    "pyproject.toml:project.version:nf",
 ]
 remote.domain = "https://dev.azure.com/"
 changelog.template_dir = "release_templates"

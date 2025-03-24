@@ -6,7 +6,7 @@ import openai
 import pytest
 
 from fastapi import FastAPI
-from httpx import AsyncClient
+from httpx import ASGITransport, AsyncClient
 
 from lab_gen.web.application import get_app
 
@@ -41,7 +41,8 @@ async def client(
     :param fastapi_app: the application.
     :yield: client for the app.
     """
-    async with AsyncClient(app=fastapi_app, base_url="http://test") as ac:
+    transport = ASGITransport(app=fastapi_app)
+    async with AsyncClient(transport=transport, base_url="http://test") as ac:
         yield ac
 
 

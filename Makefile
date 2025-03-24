@@ -2,24 +2,24 @@
 
 .PHONY: install_deps
 install_deps:
-	@poetry install --with=dev,test
+	@uv sync
 
 .PHONY: update_deps
 update_deps:
-	@poetry update --with=dev,test
+	@uv lock --upgrade
 
 .PHONY: test
 test:
-	@poetry run pytest -vv
+	@uv run pytest -vv
 
 .PHONY: itest
 itest:
-	@poetry run pytest -vv lab_gen/tests/integration
+	@uv run pytest -vv lab_gen/tests/integration
 
 .PHONY: lint
 lint:
-	@poetry run ruff check --fix lab_gen
+	@uv run ruff check --fix lab_gen
 
 .PHONY: check
 check:
-	pre-commit run --all-files
+	@uv run pre-commit run --all-files

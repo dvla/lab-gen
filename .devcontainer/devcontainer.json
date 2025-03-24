@@ -2,8 +2,7 @@
     "name": "Azure Developer Python",
     "image": "mcr.microsoft.com/devcontainers/python:3.11",
     "containerEnv": {
-        "LAB_GEN_RELOAD": "True",
-        "POETRY_VIRTUALENVS_IN_PROJECT": "true"
+        "LAB_GEN_RELOAD": "True"
     },
     "secrets": {
         "LAB_GEN_SESSION_STORE_URI": {
@@ -51,8 +50,8 @@
             "label": "Local Dev Server"
         }
     },
-    "onCreateCommand": "cp -n example.env .env && pip install poetry",
-    "updateContentCommand": "poetry install --with=dev,test",
+    "onCreateCommand": "cp -n example.env .env && pipx install uv",
+    "updateContentCommand": "uv sync",
     "remoteUser": "vscode",
     "hostRequirements": {
         "memory": "8gb",

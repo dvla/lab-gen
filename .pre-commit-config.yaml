@@ -22,7 +22,7 @@ repos:
   hooks:
   - id: autoflake
     name: autoflake
-    entry: poetry run autoflake
+    entry: uv run autoflake
     language: system
     types: [python]
     args: [--in-place, --remove-all-unused-imports, --remove-duplicate-keys]
@@ -45,7 +45,7 @@ repos:
 
   - id: ruff
     name: ruff
-    entry: poetry run ruff
+    entry: uv run ruff
     language: system
     types: [python]
     args: [check, lab_gen]
