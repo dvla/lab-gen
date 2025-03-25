@@ -1,6 +1,22 @@
 # CHANGELOG
 
 
+## v0.3.0 (2025-03-25)
+
+### Features
+
+* feat: ET-1627: Convert project to UV and updated dependencies ([`792ba43`](https://dev.azure.com/DvlaEmergingTech/lab-gen/_git/lab-gen-api/commit/792ba435a1f426e172edbb413a46c3b9aaf7dbbb))
+
+* feat: ET-1595: Add htmx page for start conversation/instant productivity ([`557a55a`](https://dev.azure.com/DvlaEmergingTech/lab-gen/_git/lab-gen-api/commit/557a55acf8d1239756265870425d3972c13c0d7e))
+
+### Unknown
+
+* ET-1627: fix: Update Dockerfile CMD to use virtual environment Python and disable auto-reload ([`054ed8b`](https://dev.azure.com/DvlaEmergingTech/lab-gen/_git/lab-gen-api/commit/054ed8b2992b5d402f3d2ce9830886d0d07ce66b))
+
+* feat:ET-1577: Add Format Instructions ([`a9156b8`](https://dev.azure.com/DvlaEmergingTech/lab-gen/_git/lab-gen-api/commit/a9156b8d26c5bf0d1debbc560991fd0a66887668))
+
+* feat:ET:1528 Added Chutney as a tool. ([`f19f822`](https://dev.azure.com/DvlaEmergingTech/lab-gen/_git/lab-gen-api/commit/f19f8225b7a46094e37fd91b648ea9d02349da52))
+
 ## v0.2.0 (2024-10-24)
 
 ### Features
@@ -38,6 +54,16 @@
 * ET-1558 :  Added Fallback Storage ([`e27ed2e`](https://dev.azure.com/DvlaEmergingTech/lab-gen/_git/lab-gen-api/commit/e27ed2eb4f8966199117338a31f0bd9d47c45b92))
 
 ## v0.1.1 (2024-10-16)
+
+### Bug Fixes
+
+* fix: ET-1560: Remove temporary change to strict parser prompt ([`ca504d4`](https://dev.azure.com/DvlaEmergingTech/lab-gen/_git/lab-gen-api/commit/ca504d453636adf519c85333882cb3656773f59e))
+
+* fix: ET-1544: fixed incorrect use of model identifier in chat metrics ([`e9f526e`](https://dev.azure.com/DvlaEmergingTech/lab-gen/_git/lab-gen-api/commit/e9f526edcfc735dc5ec66ef1a62ebc6c68110143))
+
+* fix: ET-1544: update README.md to fix formatting ([`b56633d`](https://dev.azure.com/DvlaEmergingTech/lab-gen/_git/lab-gen-api/commit/b56633d78cd4f92ce4dd5f7e650e6dea37717ad5))
+
+* fix: ET-1546: Rollback huggingFace changes for now ([`141e8f8`](https://dev.azure.com/DvlaEmergingTech/lab-gen/_git/lab-gen-api/commit/141e8f84d0417cf79be953250751e48e29f6d892))
 
 ### Chores
 
@@ -80,16 +106,6 @@
 * feat: ET-1518: Add AWS guardrails support ([`b6a6745`](https://dev.azure.com/DvlaEmergingTech/lab-gen/_git/lab-gen-api/commit/b6a6745d0b543b303999d7018c613179d9b59f14))
 
 * feat: ET-1508: Add a new test analysis prompt ([`b58fb50`](https://dev.azure.com/DvlaEmergingTech/lab-gen/_git/lab-gen-api/commit/b58fb500fc0251c200de47966d49110f32271809))
-
-### Fixes
-
-* fix: ET-1560: Remove temporary change to strict parser prompt ([`ca504d4`](https://dev.azure.com/DvlaEmergingTech/lab-gen/_git/lab-gen-api/commit/ca504d453636adf519c85333882cb3656773f59e))
-
-* fix: ET-1544: fixed incorrect use of model identifier in chat metrics ([`e9f526e`](https://dev.azure.com/DvlaEmergingTech/lab-gen/_git/lab-gen-api/commit/e9f526edcfc735dc5ec66ef1a62ebc6c68110143))
-
-* fix: ET-1544: update README.md to fix formatting ([`b56633d`](https://dev.azure.com/DvlaEmergingTech/lab-gen/_git/lab-gen-api/commit/b56633d78cd4f92ce4dd5f7e650e6dea37717ad5))
-
-* fix: ET-1546: Rollback huggingFace changes for now ([`141e8f8`](https://dev.azure.com/DvlaEmergingTech/lab-gen/_git/lab-gen-api/commit/141e8f84d0417cf79be953250751e48e29f6d892))
 
 ### Unknown
 
