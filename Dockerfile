@@ -17,4 +17,4 @@ RUN uv sync --no-default-groups --frozen
 ENV PATH="/home/genapp/.local/bin:${PATH}"
 # Start the app
 EXPOSE 8000:8000
-CMD uv run --no-default-groups --frozen python -m lab_gen
+CMD ["/home/genapp/.venv/bin/python", "-m", "lab_gen"]
